@@ -1,0 +1,25 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.20.0
+2 info using node@v24.18.0
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm view @whiskeysockets/baileys version
+7 verbose argv "view" "@whiskeysockets/baileys" "version"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-10-09T00_11_00_572Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-10-09T00_11_00_572Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly logfile done cleaning log files
+12 http fetch GET 200 https://registry.npmjs.org/npm 3427ms
+13 http fetch GET 200 https://registry.npmjs.org/@whiskeysockets%2fbaileys 3636ms (cache revalidated)
+14 verbose cwd /data/data/com.termux/files/home
+15 verbose os Linux 5.10.237-android12-9-00014-gf82f7360927e-ab14119954
+16 verbose node v24.18.0
+17 verbose npm  v11.20.0
+18 notice
+18 notice New [31mmajor[39m version of npm available! [31m11.20.0[39m -> [34m12.2.0[39m
+18 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v12.2.0[39m
+18 notice To update run: [4mnpm install -g npm@12.2.0[24m
+18 notice  { force: true, Symbol(proc-log.meta): true }
+19 verbose exit 0
+20 info ok

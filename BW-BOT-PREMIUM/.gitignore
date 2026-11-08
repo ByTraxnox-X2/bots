@@ -1,0 +1,15 @@
+node_modules/
+.env
+data/session/
+data/session.corrupt-*/
+data/backups/
+data/logs/
+data/tmp/
+data/*.json
+data/*.json.bak
+data/*.json.tmp
+data/*.json.corrupt-*
+data/bot.lock
+*.log
+*.zip
+data/mediacache/

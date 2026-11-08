@@ -1,0 +1,131 @@
+================================================================
+  GUILD GLORY BOT  —  escuadra de 4 bots para Free Fire
+================================================================
+
+COMO SUBIRLO AL HOSTING (Webs en Node)
+--------------------------------------
+1. Entra al panel del hosting y DETEN el servidor.
+2. Sube este ZIP y descomprimelo en la carpeta principal.
+3. En Startup, el comando ya es "npm install && node index.js".
+   Si te pide un archivo de inicio, pon: index.js
+4. Inicia el servidor y espera un minuto.
+5. Abre la direccion del hosting en el navegador.
+
+Te va a pedir usuario y contrasena:
+   usuario: admin
+   contrasena: 6uKC00-voAgKb
+
+Eso esta guardado en el archivo .env, ahi lo puedes cambiar cuando
+quieras (y reinicias el servidor para que tome la nueva).
+
+
+QUE HACE EL PANEL
+-----------------
+- ESCUADRA: ves los 4 lugares de la escuadra con el nombre de cada
+  bot y que esta haciendo (jugando, buscando partida, pausado...).
+  Tambien el codigo del equipo con boton para copiarlo, y las
+  cifras: partidas iniciadas, partidas terminadas, experiencia
+  ganada y cuanto lleva encendido.
+- BOTS: la lista completa. En cada uno puedes pausar o reanudar,
+  reiniciarlo, pedirle sus datos al juego o quitarlo del panel.
+  Arriba tienes "Pausar todos".
+- CLAN: cambio de clan programado (dia y hora de salida y entrada,
+  repetir cada X dias) y botones para hacerlo ya.
+- SERVIDOR: CPU, RAM, disco, red y cuanto usa el bot, con una linea
+  de los ultimos 6 minutos. Arriba en ESCUADRA tambien sale un
+  resumen (CPU / RAM / Disco); si tocas ahi te lleva a SERVIDOR.
+- CONSOLA: todo lo que va haciendo el bot, en espanol, con filtros
+  (Listo / Avisos / Errores / Detalles).
+
+Las escuadras salen agrupadas por el clan en el que estan sus bots.
+Con el lapiz al lado del ID le pones un nombre al clan.
+
+PARA PONERLO EN UN VPS DE ORACLE: lee ORACLE.txt (paso a paso).
+
+
+ESCUADRAS
+---------
+Un equipo de Free Fire solo tiene 4 lugares, asi que los bots se
+reparten de 4 en 4. Cada escuadra tiene su propio lider, su propio
+codigo de equipo y juega sus propias partidas.
+
+A que escuadra pertenece cada cuenta queda guardado en accounts.json
+(campo "squad"), asi no se mueven de grupo cuando reinicias.
+
+Si una escuadra tiene menos de 4, en el panel te salen dos botones:
+ - "Completar con 1 bot": crea una cuenta nueva para ESA escuadra,
+   con la misma region y el mismo clan que los demas.
+ - "Entrar yo": para jugar tu con ellos en el lugar libre.
+
+ENTRAR TU CON LOS BOTS
+----------------------
+En la escuadra que tenga lugar libre toca "Entrar yo". Ahi puedes:
+ - Copiar el codigo de equipo y meterlo en el juego.
+ - Escribir tu ID de Free Fire y tocar "Que el lider me invite".
+ - Tocar "Esperarme 5 min" para que no busquen partida mientras entras.
+   Si estan en partida, la espera empieza cuando esa partida termine.
+Cuando ya estes dentro, toca "Ya entre, buscar partida".
+Al terminar, si no quieres seguir con ellos, sal del equipo desde el juego.
+
+
+ENTRE UNA PARTIDA Y OTRA
+------------------------
+Al terminar una partida la escuadra se rearma sola y busca otra
+enseguida. NO se reinicia el programa (antes si lo hacia, y por eso
+con varias escuadras los bots se quedaban parados en el lobby).
+
+Mientras busca, cada 20 segundos el lider revisa si falta alguien y
+SOLO invita a ese (al que se reconecto o al que no le llego la
+invitacion). A los que ya estan dentro no los vuelve a invitar, porque
+aceptar otra vez corta la busqueda de partida.
+Si pasan 3 minutos sin encontrar partida, arma el equipo de nuevo.
+
+Si el lider de una escuadra se desconecta, otro bot de esa misma
+escuadra toma el mando y siguen jugando.
+Si el juego desconecta a un bot apenas entra (por ejemplo, una cuenta
+bloqueada), ese bot espera cada vez mas antes de volver a intentar, y
+ya no le quita el puesto de lider a los demas.
+
+En el panel cada escuadra dice en que esta: esperando a sus bots,
+armando el equipo, buscando partida, en partida o sin lider, y desde
+hace cuantos minutos.
+
+
+CREAR LAS CUENTAS
+-----------------
+En ESCUADRA toca "Crear escuadra":
+ - Region: US, BR, SAC (Sudamerica), IND, ID o BD.
+ - ID del clan: el numero de tu clan.
+ - Cuantas escuadras: de 1 a 10. Se crean una tras otra. Si una no
+   logra crear ningun bot (Garena esta rechazando), se para ahi.
+ - Bots por escuadra: de 1 a 4.
+ - Contrasena: la que se le pone a las cuentas nuevas.
+
+Las cuentas se crean con el nombre BYTRXXX_ y 5 letras o numeros
+al azar. Por ejemplo: BYTRXXX_A4K9Z
+
+Si quieres cambiar ese nombre, esta en main.py arriba de todo:
+   NICK_PREFIX = "BYTRXXX_"
+
+
+ARCHIVOS
+--------
+main.py            el bot
+panel/index.html   la pagina
+index.js           arranca el bot en el hosting de Node
+.env               usuario y contrasena del panel
+vendor/            librerias de Python (no las borres)
+accounts.json      se crea solo, ahi quedan tus cuentas
+
+IMPORTANTE: cuando subas una actualizacion, NO reemplaces
+accounts.json ni token_cache.json. Ahi estan tus bots.
+
+
+SI ALGO FALLA
+-------------
+- "Necesitas la contrasena del panel": usuario admin y la
+  contrasena de arriba.
+- La pagina dice "Sin conexion": el bot todavia se esta
+  encendiendo, espera y recarga.
+- "Este hosting no tiene Python": pidele a soporte Python 3.10
+  o mas nuevo.

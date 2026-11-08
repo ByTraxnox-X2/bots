@@ -1,0 +1,132 @@
+GUILD GLORY BOT · INSTALARLO EN UN VPS DE ORACLE (GRATIS)
+==========================================================
+
+ANTES DE EMPEZAR (importante)
+-----------------------------
+- Desde el 15 de junio de 2026 el plan gratis de Oracle da en total
+  2 núcleos (OCPU) y 12 GB de RAM en máquinas Ampere (ARM).
+  Antes eran 4 y 24 GB. Si creas una más grande, Oracle te la desactiva.
+  Crea UNA máquina de 2 OCPU y 12 GB.
+- Oracle puede apagar una máquina gratis si en 7 días casi no usa CPU,
+  red ni memoria (menos de 20 %). Si te pasa, la vuelves a prender desde
+  la página. Oracle dice que las cuentas "Pay As You Go" no tienen esa
+  regla, pero esas cuentas sí pueden cobrar si te pasas de lo gratis.
+- NUNCA tengas el bot prendido en dos lugares a la vez (el hosting de
+  ahora y Oracle). Las mismas cuentas entrando desde dos sitios se
+  sacan una a la otra y nada funciona. Apaga uno antes de prender el otro.
+
+
+SI YA TIENES LA MÁQUINA AMD CHIQUITA (VM.Standard.E2.1.Micro)
+--------------------------------------------------------------
+Si Ampere está lleno, puedes empezar con la AMD chiquita (1 GB de RAM y
+poco procesador). Es gratis y Oracle deja tener 2 de esas.
+- El instalador le agrega 2 GB de memoria extra (swap) automáticamente.
+- Antes de pasar los 16 bots, mira en tu hosting actual la pestaña
+  SERVIDOR del panel: "Lo que usa el bot". Si usa mucho, reparte:
+  2 escuadras en una micro y 2 en la otra.
+- Salta al PASO 2 (abrir el puerto) con tu máquina de siempre.
+- Necesitas la llave .key que descargaste cuando la creaste. Si la
+  perdiste, lo más fácil es borrar esa máquina y crear otra igual
+  (Create instance > Shape: VM.Standard.E2.1.Micro), guardando la llave.
+
+
+PASO 1 · Crear la máquina en Oracle
+-----------------------------------
+1. Entra a cloud.oracle.com con tu cuenta.
+2. Menú > Compute > Instances > Create instance.
+3. Image: Ubuntu 22.04 o 24.04 (en Ampere, la que diga aarch64).
+   También sirve Oracle Linux: el instalador funciona en los dos.
+4. Shape: Ampere > VM.Standard.A1.Flex > 2 OCPU y 12 GB de memoria.
+5. Networking: deja que le asigne una IP pública.
+6. SSH keys: "Generate a key pair" y descarga la CLAVE PRIVADA
+   (archivo .key). Guárdala bien: sin ella no puedes entrar.
+7. Create. Si sale "Out of host capacity", es que en ese momento no
+   hay máquinas libres: prueba otro "availability domain" o espera un
+   rato y vuelve a intentar.
+8. Anota la "Public IP address" de la máquina.
+
+
+PASO 2 · Abrir el puerto del panel (8080) en Oracle
+---------------------------------------------------
+En la página de tu máquina:
+  Subnet (el enlace) > Security Lists > Default Security List >
+  Add Ingress Rules:
+    Source CIDR:            0.0.0.0/0
+    IP Protocol:            TCP
+    Destination Port Range: 8080
+  Guardar.
+Sin esto el panel no abre desde afuera aunque el bot esté prendido.
+
+
+PASO 3 · Entrar a la máquina desde el celular (Termux)
+------------------------------------------------------
+  pkg install openssh
+  termux-setup-storage
+  cp /sdcard/Download/ssh-key-*.key ~/oracle.key
+  chmod 600 ~/oracle.key
+  ssh -i ~/oracle.key ubuntu@TU_IP
+
+(cambia TU_IP por la IP de tu máquina)
+OJO con el usuario: en Ubuntu es "ubuntu"; en Oracle Linux es "opc".
+Si no sabes cuál tiene, mira en Oracle la página de tu instancia, en
+"Image" (dice Ubuntu u Oracle Linux). Si con uno no entra, prueba el otro.
+En los pasos que siguen, donde dice ubuntu@ pon opc@ si es Oracle Linux.
+
+
+PASO 4 · Subir el ZIP
+---------------------
+Abre OTRA sesión de Termux (deslizando desde la izquierda > New session):
+  scp -i ~/oracle.key /sdcard/Download/guildglory-bot-v13.2.zip ubuntu@TU_IP:~
+
+
+PASO 5 · Instalar (en la sesión donde entraste con ssh)
+-------------------------------------------------------
+  En Ubuntu:        sudo apt-get install -y unzip
+  En Oracle Linux:  sudo dnf install -y unzip
+  Luego:
+  mkdir -p ~/guildglory
+  unzip -o ~/guildglory-bot-v13.2.zip -d ~/guildglory
+  cd ~/guildglory
+  bash instalar-oracle.sh
+
+Tarda unos minutos. Al final te muestra la dirección del panel.
+
+
+PASO 6 · Pasar tus bots del hosting de ahora
+--------------------------------------------
+1. En el hosting de ahora: APAGA el bot.
+2. Descarga estos archivos (los que tengas):
+     accounts.json  token_cache.json  devices.json
+     clanes.json    clan_rotacion.json
+3. Súbelos a Oracle desde Termux (sesión sin ssh), por ejemplo:
+     scp -i ~/oracle.key /sdcard/Download/accounts.json ubuntu@TU_IP:~/guildglory/
+   (repite con cada archivo)
+4. En la sesión con ssh:
+     sudo systemctl restart guildglory
+
+
+PASO 7 · Abrir el panel
+-----------------------
+  http://TU_IP:8080
+  usuario: admin    contraseña: la del archivo .env
+
+
+ACTUALIZAR MÁS ADELANTE (cuando te mande un ZIP nuevo)
+------------------------------------------------------
+1. Súbelo con scp como en el paso 4.
+2. En la sesión con ssh:
+     bash ~/guildglory/actualizar.sh ~/NOMBRE-DEL-ZIP-NUEVO.zip
+   Hace una copia de tus datos, pone la versión nueva y prende el bot.
+   Tus bots no se tocan.
+
+
+COMANDOS ÚTILES
+---------------
+  Ver la consola en vivo:  journalctl -u guildglory -f
+  Reiniciar el bot:        sudo systemctl restart guildglory
+  Apagar el bot:           sudo systemctl stop guildglory
+  Prender el bot:          sudo systemctl start guildglory
+  ¿Está prendido?          systemctl status guildglory
+
+En el panel, la pestaña "Servidor" te muestra CPU, RAM, disco y red
+para que veas si algo se está llenando.

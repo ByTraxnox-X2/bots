@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071018">
+<title>Guild Glory · Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#071018; --capa:#0C1A24; --capa2:#122733; --hueco:#081720;
+  --linea:rgba(125,200,210,.14); --linea2:rgba(125,200,210,.28);
+  --texto:#E4F1F4; --tenue:#7FA3AE; --tenue2:#5B818D;
+  --verde:#2BE08C; --azul:#43A9F7; --ambar:#F3B63C; --rojo:#FF6B6B;
+  --r-chico:6px; --r:12px; --r-grande:20px;
+  --nav:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Chakra Petch',system-ui,sans-serif;
+  background:var(--fondo); color:var(--texto);
+  font-size:15px; line-height:1.5; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(760px 420px at 8% -6%, rgba(43,224,140,.10), transparent 62%),
+    radial-gradient(680px 460px at 104% 102%, rgba(67,169,247,.10), transparent 62%);
+}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:#1d3d4b;border-radius:7px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- armazón ---------- */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.barra{
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+  padding:14px 16px calc(14px) 16px; padding-top:calc(14px + env(safe-area-inset-top));
+  border-bottom:1px solid var(--linea); background:rgba(7,16,24,.86); backdrop-filter:blur(14px);
+}
+.marca{display:flex;align-items:center;gap:10px;min-width:0}
+.marca .rombo{
+  width:26px;height:26px;flex-shrink:0;border-radius:7px;transform:rotate(45deg);
+  background:linear-gradient(140deg,var(--verde),var(--azul));
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset;
+}
+.marca b{font-size:17px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.marca span{color:var(--tenue2);font-size:12px;display:block;margin-top:-3px}
+.conexion{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tenue)}
+.punto{width:8px;height:8px;border-radius:50%;background:var(--rojo);flex-shrink:0}
+.conexion.ok .punto{background:var(--verde);box-shadow:0 0 0 4px rgba(43,224,140,.16)}
+
+.cuerpo{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:18px 16px calc(var(--nav) + 26px + env(safe-area-inset-bottom))}
+.vista{display:none;max-width:860px;margin:0 auto}
+.vista.activa{display:block}
+
+.titulo{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
+.titulo h2{font-size:15px;font-weight:600;letter-spacing:.2px}
+.titulo em{font-style:normal;color:var(--tenue2);font-size:12.5px}
+.titulo::after{content:'';flex:1;height:1px;background:var(--linea);align-self:center}
+
+/* ---------- alineación de la escuadra ---------- */
+.escuadra{
+  border:1px solid var(--linea);border-radius:var(--r-grande);
+  background:linear-gradient(180deg,var(--capa),rgba(12,26,36,.5));
+  padding:13px 14px 14px;margin-bottom:11px;
+}
+.esc-top{display:flex;align-items:baseline;gap:9px;margin-bottom:11px}
+.esc-top b{font-size:14.5px;font-weight:700;letter-spacing:.2px}
+.esc-top span{font-size:12px;color:var(--tenue2);margin-left:auto}
+.esc-acciones{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.esc-acciones .btn{flex:1;min-width:140px}
+.esc-nota{margin-top:9px;font-size:12px;color:var(--ambar);line-height:1.45}
+.alineacion{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.alineacion.col-1{grid-template-columns:repeat(1,minmax(0,90px))}
+.alineacion.col-2{grid-template-columns:repeat(2,1fr)}
+.alineacion.col-3{grid-template-columns:repeat(3,1fr)}
+.ranura{text-align:center;min-width:0}
+.ficha{
+  position:relative;width:100%;aspect-ratio:1/1;max-width:74px;margin:0 auto 8px;
+  border-radius:18px;display:grid;place-items:center;
+  background:var(--hueco);border:1px solid var(--linea);
+  font-weight:700;font-size:17px;letter-spacing:.5px;color:var(--tenue);
+  transition:border-color .2s,color .2s;
+}
+.ranura.viva .ficha{border-color:rgba(43,224,140,.5);color:var(--verde);background:rgba(43,224,140,.07)}
+.ranura.jugando .ficha{border-color:var(--verde);color:var(--verde);background:rgba(43,224,140,.13)}
+.ranura.buscando .ficha{border-color:rgba(243,182,60,.5);color:var(--ambar);background:rgba(243,182,60,.08)}
+.ranura.mal .ficha{border-color:rgba(255,107,107,.42);color:var(--rojo)}
+.ranura.vacia .ficha{border-style:dashed;color:var(--tenue2);font-size:22px;font-weight:400}
+.corona{position:absolute;top:-7px;right:-5px;font-size:14px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.ranura b{display:block;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ranura small{display:block;font-size:11px;color:var(--tenue2);margin-top:1px}
+.ranura.jugando small{color:var(--verde)}
+.ranura.buscando small{color:var(--ambar)}
+.ranura.mal small{color:var(--rojo)}
+
+.codigo{
+  display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;
+  border:1px solid var(--linea);border-radius:var(--r);background:var(--hueco);
+}
+.codigo span{font-size:12.5px;color:var(--tenue);flex-shrink:0}
+.codigo b{font-size:16px;letter-spacing:1.5px;margin-left:auto}
+
+/* ---------- cifras ---------- */
+.cifras{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:14px;
+  background:var(--linea);border:1px solid var(--linea);border-radius:var(--r);overflow:hidden;
+}
+.cifra{background:var(--capa);padding:12px 14px}
+.cifra b{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.cifra span{font-size:12px;color:var(--tenue2)}
+.cifra.ancha{grid-column:1/-1;display:flex;align-items:baseline;gap:8px}
+.cifra.ancha b{font-size:17px}
+
+/* ---------- botones ---------- */
+.acciones{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:11px 15px;border-radius:var(--r);border:1px solid var(--linea2);
+  background:var(--capa2);font-size:14px;font-weight:600;color:var(--texto);
+  transition:background .15s,border-color .15s,opacity .15s;
+}
+.btn:hover:not(:disabled){background:#193442;border-color:rgba(125,200,210,.44)}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn.llena{background:var(--verde);border-color:var(--verde);color:#042014}
+.btn.llena:hover:not(:disabled){background:#4aeea1;border-color:#4aeea1}
+.btn.azul{background:var(--azul);border-color:var(--azul);color:#03192b}
+.btn.azul:hover:not(:disabled){background:#63baff;border-color:#63baff}
+.btn.peligro{color:var(--rojo);border-color:rgba(255,107,107,.38)}
+.btn.peligro:hover:not(:disabled){background:rgba(255,107,107,.12)}
+.btn.crece{flex:1}
+.btn.chico{padding:7px 10px;font-size:12.5px;border-radius:var(--r-chico)}
+.svgi{width:16px;height:16px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- lista de bots ---------- */
+.lista{display:flex;flex-direction:column;gap:8px}
+.bot{
+  display:grid;grid-template-columns:3px 1fr;align-items:stretch;
+  border:1px solid var(--linea);border-radius:var(--r);background:var(--capa);
+  overflow:hidden;
+}
+.bot .marcador{background:var(--tenue2)}
+.bot.viva .marcador{background:var(--verde)}
+.bot.buscando .marcador{background:var(--ambar)}
+.bot.mal .marcador{background:var(--rojo)}
+.bot .interior{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:9px;padding:11px 12px 11px 13px;
+}
+.bot .datos{flex:1 1 190px;min-width:0}
+.bot .datos b{display:block;font-size:14.5px;font-weight:600;overflow-wrap:anywhere}
+.bot .datos small{display:block;font-size:12px;color:var(--tenue2);line-height:1.45;overflow-wrap:anywhere}
+.bot .estado{font-weight:600}
+.bot.viva .estado{color:var(--verde)}
+.bot.buscando .estado{color:var(--ambar)}
+.bot.mal .estado{color:var(--rojo)}
+.bot .mandos{display:flex;gap:6px;flex-shrink:0;margin-left:auto}
+.icono{
+  width:33px;height:33px;border-radius:9px;display:grid;place-items:center;
+  border:1px solid var(--linea);background:var(--hueco);color:var(--tenue);
+}
+.icono:hover{color:var(--texto);border-color:var(--linea2)}
+.icono.peligro:hover{color:var(--rojo);border-color:rgba(255,107,107,.4)}
+
+.vacio{
+  text-align:center;padding:44px 20px;color:var(--tenue2);
+  border:1px dashed var(--linea2);border-radius:var(--r-grande);background:rgba(12,26,36,.4);
+}
+.vacio p{margin:10px 0 16px;font-size:14px}
+.vacio .svgi{width:30px;height:30px;stroke-width:1.4;opacity:.7}
+
+/* ---------- consola ---------- */
+.filtros{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
+.chip{
+  padding:6px 12px;border-radius:999px;border:1px solid var(--linea);
+  background:var(--capa);font-size:12.5px;color:var(--tenue);white-space:nowrap;
+}
+.chip.on{background:var(--capa2);border-color:var(--linea2);color:var(--texto)}
+.consola{
+  border:1px solid var(--linea);border-radius:var(--r);background:#050E15;
+  padding:12px;height:calc(100vh - 290px);min-height:240px;overflow-y:auto;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;line-height:1.65;
+}
+.linea{display:flex;gap:9px;padding:1px 0;word-break:break-word}
+.linea time{color:#3f6572;flex-shrink:0}
+.linea.success p{color:var(--verde)}
+.linea.error p{color:var(--rojo)}
+.linea.warning p{color:var(--ambar)}
+.linea.info p{color:#BBD4DA}
+
+/* ---------- hojas ---------- */
+.hoja{
+  position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(3,9,13,.72);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.hoja.abierta{opacity:1;pointer-events:auto}
+.hoja > div{
+  width:100%;max-width:520px;max-height:90dvh;overflow-y:auto;
+  background:var(--capa);border:1px solid var(--linea2);
+  border-radius:var(--r-grande) var(--r-grande) 0 0;
+  padding:20px 18px calc(22px + env(safe-area-inset-bottom));
+  transform:translateY(14px);transition:transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.hoja.abierta > div{transform:none}
+@media(min-width:720px){
+  .hoja{align-items:center}
+  .hoja > div{border-radius:var(--r-grande);max-height:86dvh}
+}
+.hoja h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.hoja .ayuda{font-size:13px;color:var(--tenue);margin-bottom:16px}
+.campo{margin-bottom:13px}
+.campo label{display:block;font-size:12.5px;color:var(--tenue);margin-bottom:5px}
+.campo input,.campo select,.campo textarea{
+  width:100%;padding:11px 12px;border-radius:var(--r);
+  border:1px solid var(--linea);background:var(--hueco);color:var(--texto);
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--azul);outline:none}
+.campo textarea{resize:vertical;min-height:84px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.opciones{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:7px}
+.opciones-10{grid-template-columns:repeat(5,1fr)}
+.opcion{
+  padding:10px 6px;border-radius:var(--r);border:1px solid var(--linea);
+  background:var(--hueco);text-align:center;font-size:13px;font-weight:600;color:var(--tenue);
+}
+.opcion.on{border-color:var(--verde);background:rgba(43,224,140,.1);color:var(--verde)}
+.opcion small{display:block;font-weight:400;font-size:10.5px;color:var(--tenue2);margin-top:1px}
+.opcion.on small{color:rgba(43,224,140,.8)}
+.progreso{
+  margin-top:14px;border:1px solid var(--linea);border-radius:var(--r);background:#050E15;
+  padding:10px;max-height:190px;overflow-y:auto;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.6;color:#BBD4DA;
+}
+
+/* ---------- navegación ---------- */
+.nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;
+  height:calc(var(--nav) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(8,20,28,.94);backdrop-filter:blur(16px);border-top:1px solid var(--linea);
+}
+.nav button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:11px;color:var(--tenue2);font-weight:600;
+}
+.nav button .svgi{width:20px;height:20px}
+.nav button.on{color:var(--verde)}
+
+/* ---------- aviso ---------- */
+#aviso{
+  position:fixed;left:50%;bottom:calc(var(--nav) + 18px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);z-index:60;
+  padding:11px 17px;border-radius:999px;font-size:13.5px;font-weight:600;
+  background:var(--capa2);border:1px solid var(--linea2);color:var(--texto);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center;
+}
+#aviso.ver{opacity:1;transform:translate(-50%,0)}
+#aviso.err{border-color:rgba(255,107,107,.5);color:#FFC9C9}
+#aviso.bien{border-color:rgba(43,224,140,.5);color:#B6F5D8}
+.vista .ayuda{color:var(--tenue);font-size:13px;line-height:1.5}
+/* ---------- grupos por clan ---------- */
+.clan-grupo{margin:2px 0 18px}
+.clan-cab{display:flex;align-items:center;gap:9px;margin:0 2px 10px;flex-wrap:wrap}
+.clan-cab .escudo{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(67,169,247,.12);color:var(--azul);flex-shrink:0}
+.clan-cab .escudo .svgi{width:16px;height:16px}
+.clan-cab b{font-size:14.5px;font-weight:700}
+.clan-cab .mono{font-size:12px;color:var(--tenue2)}
+.clan-cab .cuenta{margin-left:auto;font-size:12px;color:var(--tenue2)}
+.chips-clan{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.chips-clan button{padding:6px 11px;border-radius:999px;border:1px solid var(--linea2);
+  background:var(--hueco);font-size:12px;color:var(--tenue)}
+.chips-clan button b{color:var(--texto);font-weight:600}
+
+/* ---------- servidor ---------- */
+.franja{display:flex;gap:7px;margin:0 0 13px;flex-wrap:wrap;cursor:pointer}
+.pastilla{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
+  border:1px solid var(--linea);background:var(--capa);font-size:12px;color:var(--tenue)}
+.pastilla b{color:var(--texto);font-weight:600}
+.pastilla i,.estado-m i{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--tenue2);flex-shrink:0}
+.pastilla.bien i,.medidor.bien .estado-m i{background:var(--verde)}
+.pastilla.alto i,.medidor.alto .estado-m i{background:var(--ambar)}
+.pastilla.lleno i,.medidor.lleno .estado-m i{background:var(--rojo)}
+.medidores{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:620px){.medidores{grid-template-columns:1fr 1fr}}
+.medidor{border:1px solid var(--linea);border-radius:var(--r);background:var(--capa);padding:12px 14px 13px}
+.medidor .fila{display:flex;align-items:center;gap:8px}
+.medidor .nombre{font-size:12.5px;color:var(--tenue)}
+.medidor .estado-m{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--tenue);display:flex;align-items:center;gap:6px}
+.medidor .valor{font-size:24px;font-weight:700;line-height:1.15;margin-top:3px}
+.medidor .detalle{font-size:12px;color:var(--tenue2)}
+.pista{height:8px;border-radius:999px;margin-top:10px;overflow:hidden;background:rgba(43,224,140,.16)}
+.pista > span{display:block;height:100%;border-radius:999px;background:var(--verde);transition:width .4s}
+.medidor.alto .pista{background:rgba(243,182,60,.16)}
+.medidor.alto .pista > span{background:var(--ambar)}
+.medidor.lleno .pista{background:rgba(255,107,107,.16)}
+.medidor.lleno .pista > span{background:var(--rojo)}
+.medidor svg.linea{display:block;width:100%;height:auto;margin-top:9px;overflow:visible}
+.datos{border:1px solid var(--linea);border-radius:var(--r);overflow:hidden;margin-top:12px}
+.datos div{display:flex;justify-content:space-between;gap:12px;padding:9px 13px;background:var(--capa);font-size:13px}
+.datos div + div{border-top:1px solid var(--linea)}
+.datos span{color:var(--tenue)}
+.datos b{font-weight:600;text-align:right;word-break:break-word}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<svg hidden><defs>
+<symbol id="i-servidor" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="6.5" rx="2"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="2"/><path d="M7.5 7.2h.1M7.5 16.7h.1M11 7.2h5.5M11 16.7h5.5"/></symbol>
+<symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3.2 19.5 6v5.6c0 4.4-3.1 7.9-7.5 9.2-4.4-1.3-7.5-4.8-7.5-9.2V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.4"/></symbol>
+<symbol id="i-lapiz" viewBox="0 0 24 24"><path d="M15.2 4.8l4 4L8.6 19.4 4 20l.6-4.6z"/><path d="M13.2 6.8l4 4"/></symbol>
+<symbol id="i-escuadra" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20c0-3.6 2.9-5.6 6.5-5.6s6.5 2 6.5 5.6"/><path d="M16 4.3a3.2 3.2 0 0 1 0 5.9"/><path d="M18 14.9c2.1.6 3.5 2.2 3.5 5.1"/></symbol>
+<symbol id="i-bots" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11.5" rx="3"/><path d="M12 8V4.5M12 3.2v.1"/><circle cx="8.6" cy="13.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.4" cy="13.4" r="1.1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-consola" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M7.5 10l2.6 2.3-2.6 2.3M12.6 15h4"/></symbol>
+<symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+<symbol id="i-copiar" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M15 6.2V5.4A2 2 0 0 0 13 3.4H5.4a2 2 0 0 0-2 2V13a2 2 0 0 0 2 2h.8"/></symbol>
+<symbol id="i-pausa" viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 5.2l11 6.8-11 6.8z"/></symbol>
+<symbol id="i-reiniciar" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.9-6.4"/><path d="M20.8 3.6v5h-5"/></symbol>
+<symbol id="i-actualizar" viewBox="0 0 24 24"><path d="M12 3.6v10.2"/><path d="M8.3 10.3 12 14l3.7-3.7"/><path d="M4.6 15.8v2.6a2 2 0 0 0 2 2h10.8a2 2 0 0 0 2-2v-2.6"/></symbol>
+<symbol id="i-quitar" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.4"/><path d="M3.6 20c0-3.5 2.9-5.5 6.4-5.5 1.2 0 2.4.2 3.4.7"/><path d="M15.8 17.6h5"/></symbol>
+<symbol id="i-fantasma" viewBox="0 0 24 24"><path d="M5 20V10.5a7 7 0 0 1 14 0V20l-2.3-1.8L14.3 20 12 18.2 9.7 20 7.3 18.2z"/><circle cx="9.5" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10.5" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-basura" viewBox="0 0 24 24"><path d="M4.6 6.6h14.8"/><path d="M9.6 6.6V5a1.6 1.6 0 0 1 1.6-1.6h1.6A1.6 1.6 0 0 1 14.4 5v1.6"/><path d="M6.6 6.6 7.5 19a2 2 0 0 0 2 1.9h5a2 2 0 0 0 2-1.9l.9-12.4"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <header class="barra">
+    <div class="marca">
+      <div class="rombo"></div>
+      <div><b>Guild Glory</b><span>Panel de bots</span></div>
+    </div>
+    <div class="conexion" id="conexion"><i class="punto"></i><span id="conexion-txt">Conectando</span></div>
+  </header>
+
+  <main class="cuerpo">
+
+    <!-- ========== ESCUADRA ========== -->
+    <section class="vista activa" id="v-escuadra">
+      <div class="titulo"><h2>Tus escuadras</h2><em id="esc-resumen">—</em></div>
+      <div class="franja" id="franja-sistema" title="Ver el estado del servidor"></div>
+      <div id="escuadras"></div>
+
+      <div class="cifras">
+        <div class="cifra"><b id="c-iniciadas">0</b><span>Partidas iniciadas</span></div>
+        <div class="cifra"><b id="c-terminadas">0</b><span>Partidas terminadas</span></div>
+        <div class="cifra"><b id="c-exp">+0</b><span>Experiencia ganada</span></div>
+        <div class="cifra"><b id="c-jugando">0</b><span>Jugando ahora</span></div>
+        <div class="cifra ancha"><b id="c-tiempo" class="mono">00:00:00</b><span>encendido sin parar</span></div>
+      </div>
+
+      <div class="acciones">
+        <button class="btn llena crece" id="b-crear"><svg class="svgi"><use href="#i-escuadra"/></svg>Crear escuadra</button>
+        <button class="btn" id="b-agregar"><svg class="svgi"><use href="#i-mas"/></svg>Agregar cuenta</button>
+      </div>
+    </section>
+
+    <!-- ========== BOTS ========== -->
+    <section class="vista" id="v-bots">
+      <div class="titulo"><h2>Bots</h2><em id="bots-resumen">—</em></div>
+      <div class="acciones" style="margin:0 0 13px">
+        <button class="btn crece" id="b-pausar-todos"><svg class="svgi"><use href="#i-pausa"/></svg><span>Pausar todos</span></button>
+        <button class="btn" id="b-agregar2"><svg class="svgi"><use href="#i-mas"/></svg>Agregar</button>
+      </div>
+      <div class="lista" id="lista-bots"></div>
+    </section>
+
+    <!-- ========== CLAN ========== -->
+    <section class="vista" id="v-clan">
+      <div class="titulo"><h2>Cambio de clan</h2><em id="clan-resumen">—</em></div>
+      <p class="ayuda" style="margin:0 0 14px">
+        Programa el día y la hora en que los bots se salen del clan donde están y entran al
+        clan nuevo. Mientras tanto siguen jugando normal.
+      </p>
+
+      <div class="campo">
+        <label>Cambio automático</label>
+        <div class="opciones" id="op-rot-activo">
+          <button class="opcion" data-v="1">Encendido</button>
+          <button class="opcion on" data-v="0">Apagado</button>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="rot-actual">ID del clan en el que están AHORA (solo se mueven los bots de ese clan)</label>
+        <input id="rot-actual" class="mono" inputmode="numeric" autocomplete="off" placeholder="Ej. 3105712089">
+        <div class="chips-clan" id="rot-chips"></div>
+      </div>
+
+      <div class="campo">
+        <label for="rot-clan">ID del clan nuevo</label>
+        <input id="rot-clan" class="mono" inputmode="numeric" autocomplete="off" placeholder="Ej. 3105712089">
+      </div>
+
+      <div class="campo">
+        <label for="rot-salida">Día y hora en que se SALEN del clan actual</label>
+        <input id="rot-salida" type="datetime-local">
+      </div>
+
+      <div class="campo">
+        <label for="rot-entrada">Día y hora en que ENTRAN al clan nuevo</label>
+        <input id="rot-entrada" type="datetime-local">
+      </div>
+
+      <div class="campo">
+        <label>Mover las dos fechas</label>
+        <div class="opciones" id="op-rot-ajuste">
+          <button class="opcion" data-d="-7">− 1 semana</button>
+          <button class="opcion" data-d="-1">− 1 día</button>
+          <button class="opcion" data-d="1">+ 1 día</button>
+          <button class="opcion" data-d="7">+ 1 semana</button>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="rot-repetir">Repetir cada cuántos días (0 = una sola vez)</label>
+        <input id="rot-repetir" class="mono" inputmode="numeric" autocomplete="off" placeholder="7">
+      </div>
+
+      <div class="campo">
+        <label for="rot-huso">Tu hora (diferencia con UTC: Ecuador es −5)</label>
+        <input id="rot-huso" class="mono" inputmode="text" autocomplete="off" placeholder="-5">
+      </div>
+
+      <div class="acciones">
+        <button class="btn llena crece" id="b-rot-guardar">Guardar</button>
+      </div>
+
+      <div class="titulo" style="margin-top:22px"><h2>Hacerlo ya</h2></div>
+      <p class="ayuda" style="margin:0 0 10px">Sin esperar a la hora programada.</p>
+      <div class="acciones">
+        <button class="btn crece" id="b-rot-salir">Sacarlos del clan</button>
+        <button class="btn crece" id="b-rot-entrar">Meterlos al clan nuevo</button>
+      </div>
+
+      <div class="cifras" style="margin-top:18px">
+        <div class="cifra ancha"><b id="rot-estado" style="font-size:14px">—</b><span>estado</span></div>
+      </div>
+    </section>
+
+    <!-- ========== SERVIDOR ========== -->
+    <section class="vista" id="v-servidor">
+      <div class="titulo"><h2>Servidor</h2><em id="srv-resumen">—</em></div>
+      <div class="medidores" id="medidores"></div>
+      <div class="datos" id="srv-datos"></div>
+      <p class="ayuda" style="margin-top:12px">Se actualiza solo cada pocos segundos. Las líneas
+        de CPU y RAM muestran los últimos 6 minutos. Si algo pasa de 90 % se marca como casi lleno.</p>
+    </section>
+
+    <!-- ========== CONSOLA ========== -->
+    <section class="vista" id="v-consola">
+      <div class="titulo"><h2>Consola</h2><em id="consola-resumen">—</em></div>
+      <div class="filtros" id="filtros">
+        <button class="chip on" data-nivel="todo">Todo</button>
+        <button class="chip" data-nivel="success">Listo</button>
+        <button class="chip" data-nivel="warning">Avisos</button>
+        <button class="chip" data-nivel="error">Errores</button>
+        <button class="chip" data-nivel="info">Detalles</button>
+      </div>
+      <div class="consola mono" id="consola"></div>
+      <div class="acciones">
+        <button class="btn crece" id="b-abajo">Ir al final</button>
+        <button class="btn peligro" id="b-limpiar"><svg class="svgi"><use href="#i-basura"/></svg>Limpiar</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="nav">
+    <button class="on" data-vista="escuadra"><svg class="svgi"><use href="#i-escuadra"/></svg>Escuadra</button>
+    <button data-vista="bots"><svg class="svgi"><use href="#i-bots"/></svg>Bots</button>
+    <button data-vista="clan"><svg class="svgi"><use href="#i-escudo"/></svg>Clan</button>
+    <button data-vista="servidor"><svg class="svgi"><use href="#i-servidor"/></svg>Servidor</button>
+    <button data-vista="consola"><svg class="svgi"><use href="#i-consola"/></svg>Consola</button>
+  </nav>
+</div>
+
+<!-- ========== HOJA: CREAR ESCUADRA ========== -->
+<div class="hoja" id="hoja-crear"><div>
+  <h3>Crear escuadra</h3>
+  <p class="ayuda">Se crean cuentas nuevas (BYTRXXX_ y 4 letras), entran a tu clan y empiezan a jugar juntas.</p>
+
+  <div class="campo">
+    <label>Región del juego</label>
+    <div class="opciones" id="op-region">
+      <button class="opcion on" data-v="US">US<small>Estados Unidos</small></button>
+      <button class="opcion" data-v="BR">BR<small>Brasil</small></button>
+      <button class="opcion" data-v="SAC">SAC<small>Sudamérica</small></button>
+      <button class="opcion" data-v="IND">IND<small>India</small></button>
+      <button class="opcion" data-v="ID">ID<small>Indonesia</small></button>
+      <button class="opcion" data-v="BD">BD<small>Bangladés</small></button>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="cr-clan">ID del clan</label>
+    <input id="cr-clan" class="mono" inputmode="numeric" autocomplete="off" placeholder="Ej. 3105712089">
+  </div>
+
+  <div class="campo">
+    <label>Cuántas escuadras</label>
+    <div class="opciones opciones-10" id="op-escuadras">
+      <button class="opcion on" data-v="1">1</button>
+      <button class="opcion" data-v="2">2</button>
+      <button class="opcion" data-v="3">3</button>
+      <button class="opcion" data-v="4">4</button>
+      <button class="opcion" data-v="5">5</button>
+      <button class="opcion" data-v="6">6</button>
+      <button class="opcion" data-v="7">7</button>
+      <button class="opcion" data-v="8">8</button>
+      <button class="opcion" data-v="9">9</button>
+      <button class="opcion" data-v="10">10</button>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label>Bots por escuadra</label>
+    <div class="opciones" id="op-cuantos">
+      <button class="opcion" data-v="1">1</button>
+      <button class="opcion" data-v="2">2</button>
+      <button class="opcion" data-v="3">3</button>
+      <button class="opcion on" data-v="4">4</button>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="cr-clave">Contraseña de las cuentas</label>
+    <input id="cr-clave" autocomplete="off" value="BYTRXXX">
+  </div>
+
+  <p class="ayuda" id="cr-resumen" style="margin:-2px 0 4px">Se crea 1 escuadra de 4 bots.</p>
+
+  <div class="acciones">
+    <button class="btn crece" data-cerrar>Cancelar</button>
+    <button class="btn llena crece" id="cr-enviar">Crear y empezar</button>
+  </div>
+
+  <div class="progreso mono" id="cr-progreso" hidden></div>
+</div></div>
+
+<!-- ========== HOJA: ENTRAR CON LOS BOTS ========== -->
+<div class="hoja" id="hoja-entrar"><div>
+  <h3 id="en-titulo">Entrar con los bots</h3>
+  <p class="ayuda">Esta escuadra tiene un lugar libre. Puedes jugar tú con ellos.</p>
+
+  <div class="codigo" style="margin:0 0 13px">
+    <span>Código de equipo</span>
+    <b class="mono" id="en-codigo">todavía no hay</b>
+    <button class="icono" id="en-copiar" title="Copiar el código"><svg class="svgi"><use href="#i-copiar"/></svg></button>
+  </div>
+
+  <div class="campo">
+    <label for="en-miid">Tu ID de Free Fire</label>
+    <input id="en-miid" class="mono" inputmode="numeric" autocomplete="off" placeholder="Solo números">
+  </div>
+  <button class="btn azul" id="en-invitar" style="width:100%"><svg class="svgi"><use href="#i-escuadra"/></svg>Que el líder me invite</button>
+
+  <p class="ayuda" id="en-nota" style="margin:14px 0 10px">Toca «Esperarme» y entra con el código o con la invitación. Al terminar, sal del equipo desde el juego si no quieres seguir con ellos.</p>
+
+  <div class="acciones">
+    <button class="btn crece" data-cerrar>Cerrar</button>
+    <button class="btn llena crece" id="en-esperar">Esperarme 5 min</button>
+  </div>
+</div></div>
+
+<!-- ========== HOJA: AGREGAR CUENTA ========== -->
+<div class="hoja" id="hoja-agregar"><div>
+  <h3>Agregar una cuenta</h3>
+  <p class="ayuda">Para meter una cuenta que ya existe. Las cuentas nuevas se hacen desde «Crear escuadra».</p>
+
+  <div class="campo">
+    <label for="ag-tipo">Cómo entra</label>
+    <select id="ag-tipo">
+      <option value="guest">Con ID y contraseña</option>
+      <option value="token">Con token de acceso</option>
+    </select>
+  </div>
+
+  <div id="ag-invitado">
+    <div class="campo"><label for="ag-uid">ID de la cuenta</label><input id="ag-uid" class="mono" inputmode="numeric" autocomplete="off" placeholder="Solo números"></div>
+    <div class="campo"><label for="ag-clave">Contraseña</label><input id="ag-clave" type="password" autocomplete="new-password" placeholder="••••••••"></div>
+  </div>
+
+  <div id="ag-token" hidden>
+    <div class="campo"><label for="ag-txt">Token</label><textarea id="ag-txt" spellcheck="false" placeholder="Pega aquí el token completo"></textarea></div>
+  </div>
+
+  <div class="acciones">
+    <button class="btn crece" data-cerrar>Cancelar</button>
+    <button class="btn azul crece" id="ag-enviar">Guardar y encender</button>
+  </div>
+</div></div>
+
+<div id="aviso"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const ESTADOS = {
+  "ONLINE":        { txt:"En línea",            clase:"viva"     },
+  "IN_MATCH":      { txt:"Jugando",             clase:"jugando"  },
+  "IN_MATCH (TEAM)":{txt:"Jugando con el equipo",clase:"jugando" },
+  "SEARCHING":     { txt:"Buscando partida",    clase:"buscando" },
+  "CONNECTING":    { txt:"Conectando",          clase:"buscando" },
+  "PAUSED":        { txt:"Pausado",             clase:"mal"      },
+  "OFFLINE":       { txt:"Desconectado",        clase:"mal"      },
+};
+function estadoDe(b){
+  const s = String(b.status || "").toUpperCase();
+  if (b.is_paused) return { txt:"Pausado", clase:"mal" };
+  if (ESTADOS[s]) return ESTADOS[s];
+  if (s.includes("IN_MATCH")) return ESTADOS["IN_MATCH"];
+  return { txt: s ? s.toLowerCase() : "Sin datos", clase:"mal" };
+}
+
+let estado = { bots:[], logs:[], escuadras:[], cargado:false, pausaTodos:false, creando:false };
+let filtro = "todo";
+let seguirAbajo = true;
+
+/* ---------- avisos ---------- */
+let avisoT;
+function aviso(txt, tipo){
+  const a = $("#aviso");
+  a.textContent = txt;
+  a.className = "ver" + (tipo ? " " + tipo : "");
+  clearTimeout(avisoT);
+  avisoT = setTimeout(() => a.className = "", 3200);
+}
+
+/* ---------- llamadas ---------- */
+async function api(ruta, cuerpo){
+  try{
+    const r = await fetch(ruta, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(cuerpo || {})
+    });
+    const d = await r.json().catch(() => ({}));
+    if (d.ok === false || d.status === "error"){
+      aviso(d.error || "No se pudo hacer eso", "err");
+      return null;
+    }
+    if (d.msg) aviso(d.msg, "bien");
+    cargar();
+    return d;
+  }catch(e){
+    aviso("No hay conexión con el bot", "err");
+    return null;
+  }
+}
+
+/* ---------- navegación ---------- */
+/* ---------- cambio de clan ---------- */
+let rotCfg = {};
+
+function rotPinta(c){
+  rotCfg = c || {};
+  $("#rot-clan").value    = c.clan_id || "";
+  $("#rot-actual").value  = c.clan_actual || "";
+  $("#rot-salida").value  = c.salida || "";
+  $("#rot-entrada").value = c.entrada || "";
+  $("#rot-repetir").value = (c.repetir_dias || 0);
+  $("#rot-huso").value    = (c.huso === undefined ? -5 : c.huso);
+  $$("#op-rot-activo .opcion").forEach(b =>
+    b.classList.toggle("on", (b.dataset.v === "1") === !!c.activo));
+
+  const partes = [];
+  partes.push("Ahora son las " + String(c.ahora || "").replace("T", " "));
+  if (c.activo){
+    if (c.salida && !c.hecho_salida)   partes.push("salen el " + c.salida.replace("T", " "));
+    if (c.entrada && !c.hecho_entrada) partes.push("entran el " + c.entrada.replace("T", " "));
+    if (c.hecho_salida && c.hecho_entrada) partes.push("cambio ya hecho");
+    if (c.repetir_dias) partes.push("se repite cada " + c.repetir_dias + " día(s)");
+  } else {
+    partes.push("cambio automático apagado");
+  }
+  if (c.ultimo) partes.push("último: " + c.ultimo);
+  if (c.salida_imposible) partes.push("el juego no deja salir del clan desde aquí; sácalos tú desde el juego");
+  else if (c.salida_ok) partes.push("salida del clan: funciona");
+  $("#rot-estado").textContent = partes.join(" · ");
+  $("#clan-resumen").textContent = c.activo ? "programado" : "apagado";
+}
+
+async function rotCargar(){
+  try{
+    const r = await fetch("/api/clan/rotacion");
+    rotPinta(await r.json());
+  }catch(e){}
+}
+
+async function rotGuardar(){
+  const sel = $("#op-rot-activo .opcion.on");
+  const activo = sel ? sel.dataset.v === "1" : false;
+  const d = await api("/api/clan/rotacion", {
+    activo,
+    clan_id: $("#rot-clan").value,
+    clan_actual: $("#rot-actual").value,
+    salida:  $("#rot-salida").value,
+    entrada: $("#rot-entrada").value,
+    repetir_dias: $("#rot-repetir").value,
+    huso: $("#rot-huso").value
+  });
+  if (d && d.cfg){ rotPinta(d.cfg); aviso("Guardado", "bien"); }
+}
+
+$$("#op-rot-activo .opcion").forEach(b => b.addEventListener("click", () => {
+  $$("#op-rot-activo .opcion").forEach(x => x.classList.toggle("on", x === b));
+}));
+$$("#op-rot-ajuste .opcion").forEach(b => b.addEventListener("click", async () => {
+  const d = await api("/api/clan/rotacion/ajustar", { dias: Number(b.dataset.d) });
+  if (d && d.cfg){ rotPinta(d.cfg); aviso("Fechas movidas", "bien"); }
+}));
+$("#b-rot-guardar").addEventListener("click", rotGuardar);
+$("#b-rot-salir").addEventListener("click", async () => {
+  if (!confirm("¿Sacar del clan a los bots de ese clan?")) return;
+  await api("/api/clan/rotacion/ahora", { accion: "salir" });
+});
+$("#b-rot-entrar").addEventListener("click", async () => {
+  if (!confirm("¿Meter al clan nuevo a los bots de ese clan?")) return;
+  await api("/api/clan/rotacion/ahora", { accion: "entrar" });
+});
+setInterval(rotCargar, 15000);
+rotCargar();
+
+$$(".nav button").forEach(b => b.addEventListener("click", () => {
+  $$(".nav button").forEach(x => x.classList.toggle("on", x === b));
+  $$(".vista").forEach(v => v.classList.toggle("activa", v.id === "v-" + b.dataset.vista));
+  if (b.dataset.vista === "consola") { seguirAbajo = true; alFinal(); }
+  if (b.dataset.vista === "clan") rotCargar();
+}));
+
+/* ---------- hojas ---------- */
+function abrir(id){
+  if (id === "#hoja-crear"){
+    const c = $("#cr-clan");
+    if (c && !c.value && estado.clanes && estado.clanes.ultimo) c.value = estado.clanes.ultimo;
+  }
+  $(id).classList.add("abierta");
+}
+function cerrar(){ $$(".hoja").forEach(h => h.classList.remove("abierta")); }
+$$(".hoja").forEach(h => h.addEventListener("click", ev => {
+  if (ev.target === h || ev.target.closest("[data-cerrar]")) cerrar();
+}));
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") cerrar(); });
+$("#b-crear").addEventListener("click", () => abrir("#hoja-crear"));
+$("#b-agregar").addEventListener("click", () => abrir("#hoja-agregar"));
+$("#b-agregar2").addEventListener("click", () => abrir("#hoja-agregar"));
+
+/* ---------- grupos de opciones ---------- */
+function grupo(sel){
+  const caja = $(sel);
+  caja.addEventListener("click", ev => {
+    const o = ev.target.closest(".opcion"); if (!o) return;
+    caja.querySelectorAll(".opcion").forEach(x => x.classList.toggle("on", x === o));
+  });
+  return () => (caja.querySelector(".opcion.on") || {}).dataset?.v;
+}
+const getRegion = grupo("#op-region");
+const getCuantos = grupo("#op-cuantos");
+const getEscuadras = grupo("#op-escuadras");
+function resumenCrear(){
+  const e = parseInt(getEscuadras(), 10) || 1, b = parseInt(getCuantos(), 10) || 4;
+  $("#cr-resumen").textContent = e === 1
+    ? `Se crea 1 escuadra de ${b} ${b === 1 ? "bot" : "bots"}.`
+    : `Se crean ${e} escuadras de ${b} (${e * b} bots en total), una tras otra. Puede tardar varios minutos.`;
+}
+$("#op-escuadras").addEventListener("click", () => setTimeout(resumenCrear));
+$("#op-cuantos").addEventListener("click", () => setTimeout(resumenCrear));
+
+/* ---------- crear escuadra ---------- */
+try { const c = localStorage.getItem("clan_id"); if (c) $("#cr-clan").value = c; } catch(e){}
+$("#cr-enviar").addEventListener("click", async () => {
+  const clan = $("#cr-clan").value.trim();
+  if (!/^\d{4,20}$/.test(clan)) { aviso("Escribe el ID del clan (solo números)", "err"); return; }
+  try { localStorage.setItem("clan_id", clan); } catch(e){}
+  const d = await api("/api/create_team", {
+    region: getRegion(), clan_id: clan,
+    count: parseInt(getCuantos(), 10) || 4,
+    squads: parseInt(getEscuadras(), 10) || 1,
+    password: $("#cr-clave").value.trim() || "BYTRXXX"
+  });
+  if (d) { $("#cr-progreso").hidden = false; aviso("Creando las cuentas...", "bien"); }
+});
+
+/* ---------- agregar cuenta ---------- */
+$("#ag-tipo").addEventListener("change", e => {
+  const token = e.target.value === "token";
+  $("#ag-token").hidden = !token;
+  $("#ag-invitado").hidden = token;
+});
+$("#ag-enviar").addEventListener("click", async () => {
+  if ($("#ag-tipo").value === "token"){
+    const t = $("#ag-txt").value.trim();
+    if (!t) { aviso("Pega el token", "err"); return; }
+    if (await api("/api/account/add", { token:t })) { cerrar(); aviso("Cuenta encendida", "bien"); }
+  } else {
+    const uid = $("#ag-uid").value.trim(), pw = $("#ag-clave").value;
+    if (!uid || !pw) { aviso("Faltan el ID o la contraseña", "err"); return; }
+    if (await api("/api/account/add", { uid, password:pw })) { cerrar(); aviso("Cuenta encendida", "bien"); }
+  }
+});
+
+/* ---------- botones de la lista ---------- */
+$("#lista-bots").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-accion]"); if (!b) return;
+  if (b.dataset.accion === "crear") { abrir("#hoja-crear"); return; }
+  const uid = b.dataset.uid, nombre = b.dataset.nombre || uid;
+  if (b.dataset.accion === "pausar")   api("/api/account/pause",   { uid });
+  if (b.dataset.accion === "reiniciar")api("/api/account/restart", { uid });
+  if (b.dataset.accion === "actualizar"){ api("/api/account/refresh",{ uid }); aviso("Pidiendo sus datos al juego"); }
+  if (b.dataset.accion === "quitar"){
+    if (confirm(`¿Quitar a ${nombre} del panel? La cuenta del juego no se borra.`))
+      api("/api/account/delete", { uid, auth_uid: b.dataset.auth || "" });
+  }
+});
+$("#b-pausar-todos").addEventListener("click", () => api("/api/account/pause_all"));
+$("#b-limpiar").addEventListener("click", () => { if (confirm("¿Borrar lo que se ve en la consola?")) api("/api/logs/clear"); });
+$("#b-abajo").addEventListener("click", () => { seguirAbajo = true; alFinal(); });
+let entrarKey = null;
+
+function sqDe(nombre){
+  return (estado.escuadras || []).find(s => s.nombre === nombre) || null;
+}
+
+function pintarEntrar(){
+  if (!entrarKey) return;
+  const s = sqDe(entrarKey);
+  if (!s) return;
+  const n = Date.now() / 1000;
+  const esperando = s.esperar_hasta && s.esperar_hasta > n;
+  const pendiente = !!s.esperar_pendiente;
+  const enPartida = (s.bots || []).some(b => String(b.status || "").includes("IN_MATCH"));
+  $("#en-titulo").textContent = `Entrar con la ${(s.titulo || "escuadra").toLowerCase()}`;
+  $("#en-codigo").textContent = s.team_code || "todavía no hay";
+  $("#en-copiar").hidden = !s.team_code;
+  const b = $("#en-esperar");
+  if (esperando){
+    b.innerHTML = `<svg class="svgi"><use href="#i-play"/></svg>Ya entré, buscar partida (${Math.max(0, Math.round(s.esperar_hasta - n))} s)`;
+    b.dataset.espera = "1";
+    $("#en-nota").textContent = "Te están esperando: entra con el código o acepta la invitación, y después toca este botón.";
+  } else if (pendiente){
+    b.innerHTML = `<svg class="svgi"><use href="#i-pausa"/></svg>Cancelar la espera`;
+    b.dataset.espera = "1";
+    $("#en-nota").textContent = "Están en partida. Cuando terminen, no buscan otra durante 5 minutos para que entres.";
+  } else {
+    b.innerHTML = `Esperarme 5 min`;
+    b.dataset.espera = "";
+    $("#en-nota").textContent = enPartida
+      ? "Están en partida. Toca «Esperarme» o «Que el líder me invite»: cuando terminen, te invitan y te esperan 5 minutos."
+      : "Toca «Esperarme» y entra con el código o con la invitación. Al terminar, sal del equipo desde el juego si no quieres seguir con ellos.";
+  }
+}
+
+$("#escuadras").addEventListener("click", ev => {
+  const crear = ev.target.closest('[data-accion="crear"]');
+  if (crear) { abrir("#hoja-crear"); return; }
+
+  const comp = ev.target.closest("[data-completar]");
+  if (comp){
+    const s = sqDe(comp.dataset.completar);
+    if (confirm(`¿Crear 1 bot nuevo para la ${(s?.titulo || "escuadra").toLowerCase()}?`))
+      api("/api/squad/add_bot", { squad: comp.dataset.completar });
+    return;
+  }
+
+  const ent = ev.target.closest("[data-entrar]");
+  if (ent){
+    entrarKey = ent.dataset.entrar;
+    try { const id = localStorage.getItem("mi_id"); if (id) $("#en-miid").value = id; } catch(e){}
+    pintarEntrar();
+    abrir("#hoja-entrar");
+    return;
+  }
+
+  const b = ev.target.closest("[data-copiar]");
+  if (!b) return;
+  navigator.clipboard?.writeText(b.dataset.copiar).then(() => aviso("Código copiado", "bien"),
+                                                        () => aviso("No se pudo copiar", "err"));
+});
+
+$("#en-copiar").addEventListener("click", () => {
+  const c = $("#en-codigo").textContent.trim();
+  if (!c || c === "todavía no hay") return;
+  navigator.clipboard?.writeText(c).then(() => aviso("Código copiado", "bien"),
+                                         () => aviso("No se pudo copiar", "err"));
+});
+$("#en-invitar").addEventListener("click", () => {
+  const id = $("#en-miid").value.trim();
+  if (!/^\d{6,15}$/.test(id)) { aviso("Escribe tu ID de Free Fire (solo números)", "err"); return; }
+  try { localStorage.setItem("mi_id", id); } catch(e){}
+  api("/api/squad/invite_player", { squad: entrarKey, uid: id });
+});
+$("#en-esperar").addEventListener("click", () => {
+  api("/api/squad/hold", { squad: entrarKey, minutes: $("#en-esperar").dataset.espera ? 0 : 5 });
+});
+$("#filtros").addEventListener("click", ev => {
+  const c = ev.target.closest(".chip"); if (!c) return;
+  filtro = c.dataset.nivel;
+  $$("#filtros .chip").forEach(x => x.classList.toggle("on", x === c));
+  pintarConsola();
+});
+$("#consola").addEventListener("scroll", e => {
+  const el = e.target;
+  seguirAbajo = (el.scrollHeight - el.scrollTop - el.clientHeight) < 40;
+});
+function alFinal(){ const c = $("#consola"); c.scrollTop = c.scrollHeight; }
+
+/* ---------- pintar ---------- */
+function tiempo(seg){
+  seg = Math.max(0, parseInt(seg, 10) || 0);
+  const h = String(Math.floor(seg / 3600)).padStart(2, "0");
+  const m = String(Math.floor(seg % 3600 / 60)).padStart(2, "0");
+  const s = String(seg % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
+const num = n => (parseInt(n, 10) || 0).toLocaleString("es-EC");
+const pl = (n, u, p) => `${num(n)} ${n === 1 ? u : p}`;
+
+function ranura(b){
+  if (!b || !b.nickname && !b.uid){
+    return `<div class="ranura vacia"><div class="ficha">+</div><b>Vacío</b><small>sin bot</small></div>`;
+  }
+  const e = estadoDe(b);
+  const nombre = b.nickname || "Sin conectar";
+  const sufijo = nombre.replace(/^BYTRXXX[_•-]?/i, "") || nombre;
+  const corto = sufijo.slice(0, 3).toUpperCase() || "··";
+  return `<div class="ranura ${e.clase}">
+    <div class="ficha">${esc(corto)}${b.es_lider ? '<span class="corona" title="Líder">👑</span>' : ""}</div>
+    <b title="${esc(nombre)}">${esc(sufijo)}</b>
+    <small>${esc(e.txt)}</small>
+  </div>`;
+}
+
+function pintarEscuadra(d){
+  const escuadras = Array.isArray(d.escuadras) ? d.escuadras : [];
+  const caja = $("#escuadras");
+  const n = Date.now() / 1000;
+  estado.escuadras = escuadras;
+
+  if (!escuadras.length){
+    caja.innerHTML = `<div class="vacio">
+      <svg class="svgi"><use href="#i-fantasma"/></svg>
+      <p>Todavía no tienes escuadras.</p>
+      <button class="btn llena" data-accion="crear">Crear escuadra</button>
+    </div>`;
+    $("#esc-resumen").textContent = "todavía sin bots";
+  } else {
+    const tarjeta = s => {
+      const vivos = (s.bots || []).filter(b => {
+        if (b.is_paused) return false;
+        const st = String(b.status || "");
+        return st.includes("IN_MATCH") || st === "ONLINE" || st === "SEARCHING";
+      }).length;
+      const jug = (s.bots || []).filter(b => String(b.status || "").includes("IN_MATCH")).length;
+      const esperando = s.esperar_hasta && s.esperar_hasta > n;
+      const pendiente = !!s.esperar_pendiente;
+      const FASES = {
+        en_partida: "en partida", buscando: "buscando partida", armando: "armando el equipo",
+        esperando: "esperando a sus bots", sin_lider: "sin líder", sin_conectar: "sin conectar",
+        esperando_partida: "esperando que terminen la partida", revisando: "revisando la escuadra",
+        invitando: "invitando al que falta",
+      };
+      const hace = s.fase_desde ? Math.max(0, Math.round((n - s.fase_desde) / 60)) : 0;
+      const faseTxt = (FASES[s.fase] || "") + (s.fase && s.fase !== "en_partida" && hace >= 1 ? ` · ${hace} min` : "");
+      const resumen = esperando ? "esperándote"
+                    : pendiente ? "te espera al terminar"
+                    : jug ? `${jug} en partida`
+                    : faseTxt ? `${faseTxt} (${vivos}/${s.esperados})`
+                    : `${vivos} de ${s.esperados} conectados`;
+      const code = s.team_code ? String(s.team_code) : "";
+      const libres = s.lugares_libres || 0;
+      const ranuras = [];
+      for (let i = 0; i < s.esperados; i++) ranuras.push(ranura((s.bots || [])[i]));
+      for (let i = 0; i < libres; i++){
+        ranuras.push(`<div class="ranura vacia"><div class="ficha">+</div><b>Libre</b><small>sin bot</small></div>`);
+      }
+      return `<section class="escuadra">
+        <div class="esc-top"><b>${esc(s.titulo || ("Escuadra " + s.num))}</b><span>${esc(resumen)}</span></div>
+        <div class="alineacion col-${Math.min(4, s.esperados + libres)}">${ranuras.join("")}</div>
+        ${code ? `<div class="codigo">
+          <span>Código de equipo</span>
+          <b class="mono">${esc(code)}</b>
+          <button class="icono" data-copiar="${esc(code)}" title="Copiar el código"><svg class="svgi"><use href="#i-copiar"/></svg></button>
+        </div>` : ""}
+        <div class="esc-acciones">
+          ${libres ? `<button class="btn chico" data-completar="${esc(s.nombre)}" ${estado.creando ? "disabled" : ""}>
+            <svg class="svgi"><use href="#i-mas"/></svg>Completar con 1 bot</button>` : ""}
+          ${libres ? `<button class="btn chico ${esperando || pendiente ? "azul" : ""}" data-entrar="${esc(s.nombre)}" data-libre="${esc(s.nombre)}">
+            <svg class="svgi"><use href="#i-escuadra"/></svg>${esperando || pendiente ? "Entrando tú..." : "Entrar yo"}</button>` : ""}
+        </div>
+        ${esperando ? `<p class="esc-nota">Te esperan ${Math.max(0, Math.round(s.esperar_hasta - n))} s. Entra con el código o acepta la invitación.</p>`
+          : pendiente ? `<p class="esc-nota">Al terminar esta partida te esperan 5 minutos.</p>` : ""}
+      </section>`;
+    };
+    // Agrupadas por el clan en el que están sus bots
+    const grupos = [], pos = {};
+    escuadras.forEach(s => {
+      const k = s.clan_id || "";
+      if (!(k in pos)){ pos[k] = grupos.length; grupos.push({ id:k, nombre:s.clan_nombre || "", lista:[] }); }
+      grupos[pos[k]].lista.push(s);
+    });
+    caja.innerHTML = grupos.map(g => {
+      const nb = g.lista.reduce((n, s) => n + (s.bots || []).length, 0);
+      const titulo = g.id ? (g.nombre || "Clan") : "Sin clan";
+      return `<div class="clan-grupo">
+        <div class="clan-cab">
+          <span class="escudo"><svg class="svgi"><use href="#i-escudo"/></svg></span>
+          <b>${esc(titulo)}</b>${g.id ? `<span class="mono">${esc(g.id)}</span>` : ""}
+          <span class="cuenta">${pl(g.lista.length, "escuadra", "escuadras")} · ${pl(nb, "bot", "bots")}</span>
+          ${g.id ? `<button class="icono" data-renombrar="${esc(g.id)}" data-nombre="${esc(g.nombre)}" title="Ponerle nombre al clan"><svg class="svgi"><use href="#i-lapiz"/></svg></button>` : ""}
+        </div>
+        ${g.lista.map(tarjeta).join("")}
+      </div>`;
+    }).join("");
+    const totalVivos = escuadras.reduce((n, s) => n + (s.bots || []).filter(b => {
+      if (b.is_paused) return false;
+      const st = String(b.status || "");
+      return st.includes("IN_MATCH") || st === "ONLINE" || st === "SEARCHING";
+    }).length, 0);
+    $("#esc-resumen").textContent =
+      `${pl(escuadras.length, "escuadra", "escuadras")}, ${pl(totalVivos, "bot conectado", "bots conectados")}`;
+  }
+
+  const jugando = estado.bots.filter(b => String(b.status || "").includes("IN_MATCH")).length;
+  $("#c-iniciadas").textContent  = num(d.total_matches_started);
+  $("#c-terminadas").textContent = num(d.total_matches);
+  $("#c-exp").textContent        = "+" + num(d.total_gained_exp);
+  $("#c-jugando").textContent    = num(jugando);
+  $("#c-tiempo").textContent     = tiempo(d.uptime);
+}
+
+function pintarBots(){
+  const bots = estado.bots;
+  const caja = $("#lista-bots");
+  if (!bots.length){
+    caja.innerHTML = `<div class="vacio">
+      <svg class="svgi"><use href="#i-fantasma"/></svg>
+      <p>Todavía no hay bots encendidos.</p>
+      <button class="btn llena" data-accion="crear">Crear escuadra</button>
+    </div>`;
+    $("#bots-resumen").textContent = "ninguno";
+    return;
+  }
+  caja.innerHTML = bots.map(b => {
+    const e = estadoDe(b);
+    const uid = esc(b.uid || b.auth_uid || "");
+    const nombre = esc(b.nickname || "Sin nombre");
+    const partidas = pl(b.matches || 0, "partida", "partidas");
+    const expG = num(b.gained_exp || 0);
+    return `<article class="bot ${e.clase}">
+      <i class="marcador"></i>
+      <div class="interior">
+        <div class="datos">
+          <b>${nombre}</b>
+          <small><span class="estado">${esc(e.txt)}</span> · ID ${uid} · nivel ${esc(b.level || 1)} · ${partidas} · +${expG} exp</small>
+        </div>
+        <div class="mandos">
+          <button class="icono" data-accion="pausar" data-uid="${uid}" title="${b.is_paused ? "Reanudar" : "Pausar"}"><svg class="svgi"><use href="#${b.is_paused ? "i-play" : "i-pausa"}"/></svg></button>
+          <button class="icono" data-accion="reiniciar" data-uid="${uid}" title="Reiniciar"><svg class="svgi"><use href="#i-reiniciar"/></svg></button>
+          <button class="icono" data-accion="actualizar" data-uid="${uid}" title="Actualizar sus datos"><svg class="svgi"><use href="#i-actualizar"/></svg></button>
+          <button class="icono peligro" data-accion="quitar" data-uid="${uid}" data-auth="${esc(b.auth_uid || "")}" data-nombre="${nombre}" title="Quitar del panel"><svg class="svgi"><use href="#i-quitar"/></svg></button>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+
+  const pausados = bots.filter(b => b.is_paused).length;
+  $("#bots-resumen").textContent = pausados
+    ? `${pl(bots.length, "bot", "bots")}, ${pausados} en pausa`
+    : pl(bots.length, "bot", "bots");
+  estado.pausaTodos = bots.length > 0 && pausados === bots.length;
+  $("#b-pausar-todos").querySelector("span").textContent = estado.pausaTodos ? "Reanudar todos" : "Pausar todos";
+  $("#b-pausar-todos").querySelector("use").setAttribute("href", estado.pausaTodos ? "#i-play" : "#i-pausa");
+}
+
+function pintarConsola(){
+  const logs = estado.logs.filter(l => filtro === "todo" || (l.level || "info") === filtro);
+  const caja = $("#consola");
+  caja.innerHTML = logs.length
+    ? logs.map(l => `<div class="linea ${esc(l.level || "info")}"><time>${esc(l.time || "")}</time><p>${esc(l.message || "")}</p></div>`).join("")
+    : `<div style="color:#3f6572;padding:8px">Todavía no hay nada aquí.</div>`;
+  $("#consola-resumen").textContent = pl(logs.length, "línea", "líneas");
+  if (seguirAbajo) alFinal();
+}
+
+function pintarProgreso(d){
+  const creando = !!d.creating;
+  estado.creando = creando;
+  $("#cr-enviar").disabled = creando;
+  $("#cr-enviar").textContent = creando ? "Creando..." : "Crear y empezar";
+  const p = $("#cr-progreso");
+  const lineas = d.create_progress || [];
+  if (creando || lineas.length){
+    p.hidden = false;
+    p.innerHTML = lineas.map(x => `<div>${esc(x)}</div>`).join("");
+    p.scrollTop = p.scrollHeight;
+  }
+}
+
+/* ---------- servidor ---------- */
+function bytes(n){
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  const u = ["B","KB","MB","GB","TB"]; let i = 0; n = Number(n);
+  while (n >= 1024 && i < u.length - 1){ n /= 1024; i++; }
+  return (n >= 100 || i === 0 ? n.toFixed(0) : n.toFixed(1)) + " " + u[i];
+}
+function velocidad(bps){ return bps === null || bps === undefined ? "—" : bytes(bps) + "/s"; }
+function nivel(p){
+  if (p === null || p === undefined) return ["", ""];
+  if (p >= 90) return ["lleno", "Casi lleno"];
+  if (p >= 75) return ["alto", "Alto"];
+  return ["bien", "Bien"];
+}
+function duracion(seg){
+  if (seg === null || seg === undefined) return "—";
+  seg = Math.floor(seg);
+  const d = Math.floor(seg / 86400), h = Math.floor(seg % 86400 / 3600), m = Math.floor(seg % 3600 / 60);
+  return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : `${m} min`;
+}
+function pct0(p){ return p === null || p === undefined ? "—" : Math.round(p) + "%"; }
+function lineaChica(vals){
+  if (!Array.isArray(vals) || vals.length < 2) return "";
+  const w = 300, h = 36;
+  const pts = vals.map((v, i) => [i * (w / (vals.length - 1)), h - 3 - Math.max(0, Math.min(100, v)) / 100 * (h - 6)]);
+  const d = pts.map((q, i) => (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" ");
+  const u = pts[pts.length - 1];
+  const mn = Math.round(Math.min(...vals)), mx = Math.round(Math.max(...vals));
+  return `<svg class="linea" viewBox="0 0 ${w} ${h}" role="img" aria-label="Últimos minutos: mínimo ${mn}%, máximo ${mx}%">
+    <title>Últimos minutos: mínimo ${mn}% · máximo ${mx}%</title>
+    <path d="M0 ${h - 3} H${w}" stroke="var(--linea)" stroke-width="1"/>
+    <path d="${d}" fill="none" stroke="var(--tenue2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${u[0].toFixed(1)}" cy="${u[1].toFixed(1)}" r="3.5" fill="var(--azul)"/>
+  </svg>`;
+}
+function medidor(nombre, pct, valor, detalle, hist){
+  const [cls, txt] = nivel(pct);
+  const w = (pct === null || pct === undefined) ? 0 : Math.max(2, Math.min(100, pct));
+  return `<div class="medidor ${cls}">
+    <div class="fila"><span class="nombre">${esc(nombre)}</span>
+      ${txt ? `<span class="estado-m"><i></i>${txt}</span>` : ""}</div>
+    <div class="valor">${esc(valor)}</div>
+    <div class="detalle">${esc(detalle)}</div>
+    <div class="pista" role="meter" aria-label="${esc(nombre)}" aria-valuemin="0" aria-valuemax="100"
+         aria-valuenow="${Math.round(pct || 0)}"><span style="width:${w}%"></span></div>
+    ${lineaChica(hist)}
+  </div>`;
+}
+function pintarSistema(si){
+  if (!si) return;
+  const ram = si.ram || {}, disco = si.disco || {}, bot = si.bot || {}, eq = si.equipo || {};
+  const hist = si.historial || {};
+  const nuc = si.nucleos_limite ? `${si.nucleos_limite} núcleos (límite del hosting)` : `${si.nucleos || "—"} núcleos`;
+  const botPct = (bot.ram && ram.total) ? 100 * bot.ram / ram.total : null;
+  $("#medidores").innerHTML = [
+    medidor("CPU", si.cpu_pct, pct0(si.cpu_pct), nuc + (si.carga ? ` · carga ${si.carga[0]}` : ""), hist.cpu),
+    medidor(ram.contenedor ? "RAM (límite del hosting)" : "RAM", ram.pct, pct0(ram.pct),
+            `${bytes(ram.usada)} de ${bytes(ram.total)}`, hist.ram),
+    medidor("Disco", disco.pct, pct0(disco.pct), `${bytes(disco.usado)} usados · quedan ${bytes(disco.libre)}`),
+    medidor("Lo que usa el bot", botPct, bytes(bot.ram),
+            `CPU del bot ${pct0(bot.cpu_pct)} · ${bot.hilos ?? "—"} hilos`),
+  ].join("");
+  const red = si.red;
+  const filas = [
+    ["Servidor encendido hace", duracion(si.servidor_encendido_seg)],
+    ["Bot encendido hace", duracion(bot.encendido_seg)],
+    ["Red (baja / sube)", red ? `${velocidad(red.baja_bps)} / ${velocidad(red.sube_bps)}` : "—"],
+    ["Red total (bajado / subido)", red ? `${bytes(red.baja_total)} / ${bytes(red.sube_total)}` : "—"],
+    ["Memoria de intercambio (swap)", ram.swap_total ? `${bytes(ram.swap_usada)} de ${bytes(ram.swap_total)}` : "no tiene"],
+    ["Archivos abiertos por el bot", bot.archivos ?? "—"],
+    ["Sistema", `${eq.sistema || "—"} · ${eq.arquitectura || ""}`],
+    ["Python", eq.python || "—"],
+    ["Nombre del equipo", eq.nombre || "—"],
+  ];
+  $("#srv-datos").innerHTML = filas.map(f => `<div><span>${esc(f[0])}</span><b>${esc(String(f[1]))}</b></div>`).join("");
+  const peor = Math.max(si.cpu_pct || 0, ram.pct || 0, disco.pct || 0);
+  $("#srv-resumen").textContent = peor >= 90 ? "algo está casi lleno" : peor >= 75 ? "uso alto" : "todo bien";
+  const pastilla = (nom, p) => { const [c] = nivel(p); return `<span class="pastilla ${c}"><i></i>${nom} <b>${pct0(p)}</b></span>`; };
+  $("#franja-sistema").innerHTML = pastilla("CPU", si.cpu_pct) + pastilla("RAM", ram.pct) + pastilla("Disco", disco.pct);
+}
+$("#franja-sistema").addEventListener("click", () => {
+  const b = document.querySelector('.nav button[data-vista="servidor"]');
+  if (b) b.click();
+});
+
+/* ---------- clanes ---------- */
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest("[data-renombrar]");
+  if (!b) return;
+  const id = b.dataset.renombrar;
+  const nombre = prompt("Nombre para el clan " + id + " (déjalo vacío para quitarlo):", b.dataset.nombre || "");
+  if (nombre === null) return;
+  await api("/api/clanes/nombre", { id, nombre });
+});
+function pintarChipsClan(){
+  const caja = $("#rot-chips");
+  if (!caja) return;
+  const vistos = {};
+  (estado.escuadras || []).forEach(s => {
+    if (!s.clan_id) return;
+    const v = vistos[s.clan_id] || (vistos[s.clan_id] = { nombre: s.clan_nombre || "", bots: 0 });
+    v.bots += (s.bots || []).length;
+  });
+  const ids = Object.keys(vistos);
+  caja.innerHTML = ids.length ? ids.map(id =>
+    `<button type="button" data-clan-chip="${esc(id)}">${vistos[id].nombre ? `<b>${esc(vistos[id].nombre)}</b> · ` : ""}${esc(id)} · ${pl(vistos[id].bots, "bot", "bots")}</button>`
+  ).join("") : "";
+}
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-clan-chip]");
+  if (b) $("#rot-actual").value = b.dataset.clanChip;
+});
+
+/* ---------- carga ---------- */
+let fallos = 0;
+async function cargar(){
+  try{
+    const r = await fetch("/api/stats", { cache:"no-store" });
+    const d = await r.json();
+    fallos = 0;
+    estado.cargado = true;
+    estado.bots = Array.isArray(d.accounts) ? d.accounts : [];
+    estado.logs = Array.isArray(d.logs) ? d.logs : [];
+    $("#conexion").classList.add("ok");
+    $("#conexion-txt").textContent = "Encendido";
+    estado.clanes = d.clanes || {};
+    pintarEscuadra(d);
+    pintarSistema(d.sistema);
+    pintarChipsClan();
+    pintarEntrar();
+    pintarBots();
+    pintarConsola();
+    pintarProgreso(d);
+  }catch(e){
+    fallos++;
+    if (fallos > 1){
+      $("#conexion").classList.remove("ok");
+      $("#conexion-txt").textContent = "Sin conexión";
+    }
+  }
+}
+cargar();
+setInterval(cargar, 2500);
+</script>
+</body>
+</html>

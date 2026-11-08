@@ -1,0 +1,28 @@
+{
+  "name": "bw-bot-premium",
+  "version": "0.1.0",
+  "description": "BW BOT PREMIUM - Bot de WhatsApp para Free Fire, clanes, GDC, juegos, economía, tools y multimedia",
+  "main": "index.js",
+  "type": "commonjs",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node scripts/run-tests.js",
+    "check": "node scripts/check.js",
+    "verify-deploy": "node scripts/verify-deploy.js",
+    "ff-probe": "node scripts/ff-probe.js",
+    "lint": "node scripts/lint.js",
+    "format": "node scripts/format.js",
+    "backup": "node scripts/backup.js",
+    "verify-commands": "node scripts/verify-commands.js",
+    "docs:commands": "node scripts/verify-commands.js --write",
+    "clan-probe": "node scripts/clan-probe.js",
+    "audit": "node scripts/audit.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.18"
+  }
+}

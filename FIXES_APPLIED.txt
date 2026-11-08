@@ -1,0 +1,15 @@
+GUILD GLORY BOT - CORRECCIÓN
+
+1. Corregido NameError: se pasaba player_region al iniciar play_game,
+   aunque la variable disponible en ese ámbito es account_region.
+2. Se excluyó .env del ZIP para no redistribuir la contraseña del panel.
+   Conserva tu .env original localmente y no lo compartas.
+3. main.py pasó la comprobación de sintaxis de Python.
+
+IMPORTANTE:
+- Esta corrección elimina el error de variable que interrumpía el flujo
+  al detectar una partida.
+- No se afirma que el personaje ya se mueva en el servidor real: el
+  protocolo de movimiento requiere validación dentro de una partida.
+- Si sigue sin entrar, comparte los nuevos logs desde "Partida encontrada"
+  hasta el primer error, ocultando tokens y contraseñas.

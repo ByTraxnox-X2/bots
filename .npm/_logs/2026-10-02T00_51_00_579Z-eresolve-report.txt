@@ -1,0 +1,22 @@
+'Log files:
+/data/data/com.termux/files/home/.npm/_logs/2026-10-02T00_51_00_579Z-debug-0.log
+
+# npm resolution error report
+
+While resolving: @itsliaaa/baileys@0.3.18-final
+Found: jimp@0.22.12
+node_modules/jimp
+  jimp@"^0.22.12" from the root project
+
+Could not resolve dependency:
+peerOptional jimp@"^1.6.1" from @whiskeysockets/baileys@0.3.18-final
+node_modules/@whiskeysockets/baileys
+  @whiskeysockets/baileys@"github:itsliaaa/baileys" from the root project
+
+Conflicting peer dependency: jimp@1.6.1
+node_modules/jimp
+  peerOptional jimp@"^1.6.1" from @whiskeysockets/baileys@0.3.18-final
+  node_modules/@whiskeysockets/baileys
+    @whiskeysockets/baileys@"github:itsliaaa/baileys" from the root project
+
+Fix the upstream dependency conflict, or retry this command with --force or --legacy-peer-deps to accept an incorrect (and potentially broken) dependency resolution.

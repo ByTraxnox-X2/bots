@@ -1,0 +1,11 @@
+protobuf_decoder-0.4.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+protobuf_decoder-0.4.0.dist-info/LICENSE,sha256=9Q2jTh6FH9mRzfNt47SlDa3Buo90XhgjlD7He-i6sSI,1066
+protobuf_decoder-0.4.0.dist-info/METADATA,sha256=h3oQsdHUMNKf7N7_R9QMViKDxz0rMrCyEHCteO9xTts,3988
+protobuf_decoder-0.4.0.dist-info/RECORD,,
+protobuf_decoder-0.4.0.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+protobuf_decoder-0.4.0.dist-info/WHEEL,sha256=G16H4A3IeoQmnOrYV4ueZGKSjhipXx8zc8nu9FGlvMA,92
+protobuf_decoder-0.4.0.dist-info/top_level.txt,sha256=bn42kex8ZrVR4GYgz9z6crvxiIZUw3M6frIdZZn9ivc,17
+protobuf_decoder/__init__.py,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+protobuf_decoder/__pycache__/__init__.cpython-313.pyc,,
+protobuf_decoder/__pycache__/protobuf_decoder.cpython-313.pyc,,
+protobuf_decoder/protobuf_decoder.py,sha256=fyntUx96J_GQnZrGiRa9yQRXvMgZHrxtEBb44jU33Hs,17203

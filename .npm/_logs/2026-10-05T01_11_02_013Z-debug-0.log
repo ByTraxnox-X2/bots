@@ -1,0 +1,19 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.20.0
+2 info using node@v24.18.0
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/BW-BOT-PREMIUM/.npmrc
+5 silly config load:file:/data/data/com.termux/files/home/.npmrc
+6 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+7 verbose title npm start
+8 verbose argv "start"
+9 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-10-05T01_11_02_013Z-
+10 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-10-05T01_11_02_013Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 verbose cwd /data/data/com.termux/files/home/BW-BOT-PREMIUM
+14 verbose os Linux 5.10.237-android12-9-00014-gf82f7360927e-ab14119954
+15 verbose node v24.18.0
+16 verbose npm  v11.20.0
+17 verbose exit 2
+18 verbose code 2

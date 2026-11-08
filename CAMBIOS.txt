@@ -1,0 +1,105 @@
+GUILD GLORY BOT - v13.2
+=======================
+
+v13.2 (el bot gasta MUCHO menos CPU)
+ - Dentro de la partida, el servidor del juego le manda a cada bot decenas
+   de avisos por segundo (dónde está cada jugador, disparos, objetos...).
+   El bot los descifraba TODOS, uno por uno, aunque no usa nada de eso.
+   Eso era lo que subía el CPU a más de 100%.
+ - Ahora solo mira la "etiqueta" de cada aviso (eso ya dice qué es) y
+   descifra únicamente los pocos que sí necesita: saludo, confirmación,
+   ping, fin de partida. El cifrado que sí se usa va 2 veces más rápido.
+ - Prueba con 16 bots en partida contra un servidor de prueba:
+     25 avisos por segundo a cada bot: antes 44% de CPU, ahora 4%.
+     50 avisos por segundo a cada bot: antes 80% de CPU, ahora 5%.
+   (En tu hosting los números cambian, pero la diferencia es parecida.)
+ - Como el bot ya no se ahoga, tampoco se atrasa con los avisos del equipo
+   (invitar, aceptar, iniciar) mientras otras escuadras están jugando.
+ - Se comprobó con miles de paquetes que lo nuevo da exactamente lo mismo
+   que antes. Todo lo demás es igual que la v13.1 (escuadras, panel, clanes).
+
+v13.1 (solo instalador y guía, el bot es igual que la v13)
+ - instalar-oracle.sh ahora sirve también en Oracle Linux (antes solo
+   Ubuntu), en máquinas ARM y AMD.
+ - Si la máquina tiene poca RAM (como la AMD chiquita de 1 GB), le
+   agrega 2 GB de memoria extra (swap) para que no se quede sin memoria.
+ - ORACLE.txt: qué hacer con la máquina AMD chiquita y qué usuario usar
+   (ubuntu u opc).
+
+
+POR QUÉ LAS ESCUADRAS SE QUEDABAN HORAS "EN EQUIPO" SIN INICIAR
+---------------------------------------------------------------
+Se revisó todo el sistema de escuadras desde cero. Eran 3 errores juntos:
+
+1) UNA MARCA QUE NUNCA SE BORRABA.
+   Cuando un bot entraba a partida se marcaba "en partida". Si algo fallaba
+   al entrar, esa marca se quedaba puesta para siempre. El líder esperaba a
+   que ese bot "terminara la partida"... y nunca terminaba. Escuadra parada.
+
+2) MIENTRAS ESPERABA, DESHACÍA EL EQUIPO.
+   El reloj de "no encuentra partida" seguía corriendo durante esa espera.
+   Cada 100 s deshacía el equipo, invitaba a todos y cambiaba de líder. El
+   líder nuevo heredaba la misma marca rota y también se quedaba parado.
+   (Por eso veías coronas cambiando y "no encuentran partida" en la consola.)
+
+3) LOS MIEMBROS VOLVÍAN A ACEPTAR CON CUALQUIER AVISO.
+   El juego manda avisos del equipo a cada rato. Los bots adivinaban mal
+   quién los invitaba (a veces tomaban el código del equipo como si fuera
+   el líder) y volvían a aceptar. Aceptar otra vez saca al bot y lo vuelve
+   a meter, y eso corta el emparejamiento de toda la escuadra.
+
+CÓMO FUNCIONA AHORA (tal como lo pediste)
+-----------------------------------------
+ 1. El líder arma el equipo e invita a los suyos.
+ 2. Cada bot acepta SOLO la invitación de SU líder, y una sola vez por
+    equipo. Los avisos que el juego manda después no se vuelven a aceptar.
+ 3. El líder espera a que acepten (hasta 7 s). Al que no contestó lo
+    invita una vez más. Luego le da a INICIAR.
+ 4. Los miembros solo avisan "listo". Nunca inician.
+ 5. Al terminar la partida, el líder espera a que TODOS hayan salido,
+    espera 7 segundos más, revisa quién jugó con él:
+      - si jugaron todos → inicia enseguida, sin deshacer nada;
+      - si faltó uno → invita SOLO a ese, espera que acepte e inicia.
+ 6. Si un bot se desconecta y vuelve, el líder lo invita.
+ 7. Si en 150 s no encuentra partida, arma un equipo nuevo; si pasa otra
+    vez, le pasa el mando a otro bot de SU escuadra.
+ 8. Nada espera para siempre: todo tiene tope.
+
+Todo esto está en un archivo aparte, escuadra.py, y se probó con un
+simulador del juego con fallas a propósito (invitaciones perdidas,
+desconexiones, errores al entrar): entre 96 y 99 % de las partidas con
+los 4 juntos, ninguna escuadra parada más de unos 2 minutos, y ninguna
+mezcla entre escuadras. Con los errores viejos, el mismo simulador daba
+escuadras paradas más de 20 minutos.
+
+NUEVO EN EL PANEL
+-----------------
+- Pestaña SERVIDOR: CPU, RAM, disco, red, cuánto usa el bot y cuánto
+  lleva encendido. Con líneas de los últimos 6 minutos y aviso de
+  "Alto" (75 %) o "Casi lleno" (90 %). Si el hosting es un contenedor,
+  muestra el límite del hosting, que es lo que de verdad se llena.
+- Arriba en ESCUADRA: resumen CPU / RAM / Disco (tócalo para ver más).
+- Las escuadras salen AGRUPADAS POR CLAN. Con el lápiz le pones nombre.
+- Al crear una escuadra, el ID del último clan que usaste ya viene puesto.
+- Cambio de clan: eliges de qué clan salen (con botones de tus clanes) y
+  solo se mueven los bots de ese clan. Al entrar al nuevo, el panel los
+  pasa a su grupo nuevo.
+
+NUEVO: LISTO PARA VPS DE ORACLE
+-------------------------------
+- instalar-oracle.sh: instala todo y deja el bot como servicio que se
+  prende solo. Paso a paso en ORACLE.txt.
+- actualizar.sh: para poner un ZIP nuevo en el VPS sin tocar tus bots
+  (hace copia de seguridad y conserva tu .env).
+- OJO: desde junio de 2026 Oracle gratis da 2 núcleos y 12 GB (no 24).
+
+DIAGNÓSTICO
+-----------
+Los avisos de equipo que manda el juego se guardan resumidos en
+logs/equipo.log (máximo ~1 MB). Si alguna escuadra se porta raro,
+mándame ese archivo y sabré exactamente qué pasó.
+
+EL .env YA VIENE LLENO
+----------------------
+usuario: admin
+contraseña: 6uKC00-voAgKb

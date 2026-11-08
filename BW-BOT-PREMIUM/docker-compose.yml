@@ -1,0 +1,43 @@
+services:
+  bw-bot:
+    build: .
+    image: bw-bot-premium:latest
+    container_name: bw-bot-premium
+    # Reinicio automático tras caídas y tras reiniciar el servidor.
+    restart: unless-stopped
+    # Reaper de procesos zombi y reenvío correcto de señales.
+    init: true
+    # Tiempo para el apagado limpio (el bot vuelca la base de datos y cierra la sesión).
+    stop_grace_period: 30s
+    env_file:
+      - .env
+    environment:
+      # Estas variables fijan las rutas dentro del contenedor; el resto viene de .env.
+      DATA_DIR: /app/data
+      SESSION_DIR: /app/data/session
+      BACKUP_DIR: /app/data/backups
+      LOG_DIR: /app/data/logs
+      TMP_DIR: /app/data/tmp
+      HEALTH_PORT: "3000"
+      HEALTH_HOST: 0.0.0.0
+      TZ_BOT: ${TZ_BOT:-America/Guayaquil}
+    volumes:
+      # Sesión de WhatsApp, base de datos, backups y logs persisten entre reinicios y actualizaciones.
+      - bw_data:/app/data
+    # El health check solo se publica en localhost del servidor. No lo expongas a Internet.
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get({host:'127.0.0.1',port:3000,path:'/health',timeout:4000},r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1)).on('timeout',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 40s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  bw_data:

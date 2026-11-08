@@ -1,0 +1,19 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.20.0
+2 info using node@v24.18.0
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm ls @whiskeysockets/baileys
+7 verbose argv "ls" "@whiskeysockets/baileys"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-10-09T00_12_15_813Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-10-09T00_12_15_813Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+12 silly logfile done cleaning log files
+13 verbose cwd /data/data/com.termux/files/home
+14 verbose os Linux 5.10.237-android12-9-00014-gf82f7360927e-ab14119954
+15 verbose node v24.18.0
+16 verbose npm  v11.20.0
+17 verbose exit 1
+18 verbose code 1

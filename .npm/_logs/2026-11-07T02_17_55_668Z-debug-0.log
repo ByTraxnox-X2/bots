@@ -1,0 +1,223 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.20.0
+2 info using node@v24.18.0
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm ci
+7 verbose argv "ci" "--omit" "dev"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-11-07T02_17_55_668Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-11-07T02_17_55_668Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly install-scripts no package.json at prefix Could not read package.json: Error: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/package.json'
+12 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+13 verbose loadVirtual Error: loadVirtual requires existing shrinkwrap file
+13 verbose loadVirtual     at Arborist.loadVirtual (/data/data/com.termux/files/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/load-virtual.js:46:18)
+13 verbose loadVirtual     at async CI.exec (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/commands/ci.js:64:7)
+13 verbose loadVirtual     at async Npm.exec (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/npm.js:193:9)
+13 verbose loadVirtual     at async module.exports (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/cli/entry.js:67:5)
+14 silly logfile done cleaning log files
+15 verbose stack Error: 
+15 verbose stack The `npm ci` command can only install with an existing package-lock.json or
+15 verbose stack npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+15 verbose stack later to generate a package-lock.json file, then try again.
+15 verbose stack
+15 verbose stack Clean install a project
+15 verbose stack
+15 verbose stack Usage:
+15 verbose stack npm ci
+15 verbose stack
+15 verbose stack Options:
+15 verbose stack [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+15 verbose stack [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+15 verbose stack [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+15 verbose stack [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts]
+15 verbose stack [--allow-directory <all|none|root>] [--allow-file <all|none|root>]
+15 verbose stack [--allow-git <all|none|root>] [--allow-remote <all|none|root>]
+15 verbose stack [--allow-scripts <package-list> [--allow-scripts <package-list> ...]]
+15 verbose stack [--strict-allow-scripts] [--dangerously-allow-all-scripts] [--no-audit]
+15 verbose stack [--no-bin-links] [--no-fund] [--dry-run]
+15 verbose stack [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+15 verbose stack [--workspaces] [--include-workspace-root] [--install-links]
+15 verbose stack
+15 verbose stack   --install-strategy
+15 verbose stack     Sets the strategy for installing packages in node_modules.
+15 verbose stack
+15 verbose stack   --legacy-bundling
+15 verbose stack     Instead of hoisting package installs in `node_modules`, install packages
+15 verbose stack
+15 verbose stack   --global-style
+15 verbose stack     Only install direct dependencies in the top level `node_modules`,
+15 verbose stack
+15 verbose stack   --omit
+15 verbose stack     Dependency types to omit from the installation tree on disk.
+15 verbose stack
+15 verbose stack   --include
+15 verbose stack     Option that allows for defining which types of dependencies to install.
+15 verbose stack
+15 verbose stack   --strict-peer-deps
+15 verbose stack     If set to `true`, and `--legacy-peer-deps` is not set, then _any_
+15 verbose stack
+15 verbose stack   --foreground-scripts
+15 verbose stack     Run all build scripts (ie, `preinstall`, `install`, and
+15 verbose stack
+15 verbose stack   --ignore-scripts
+15 verbose stack     If true, npm does not run scripts specified in package.json files.
+15 verbose stack
+15 verbose stack   --allow-directory
+15 verbose stack     Limits the ability for npm to install dependencies from directories.
+15 verbose stack
+15 verbose stack   --allow-file
+15 verbose stack     Limits the ability for npm to install dependencies from tarball files.
+15 verbose stack
+15 verbose stack   --allow-git
+15 verbose stack     Limits the ability for npm to fetch dependencies from git references.
+15 verbose stack
+15 verbose stack   --allow-remote
+15 verbose stack     Limits the ability for npm to fetch dependencies from urls.
+15 verbose stack
+15 verbose stack   --allow-scripts
+15 verbose stack     Comma-separated list of packages whose install-time lifecycle scripts
+15 verbose stack
+15 verbose stack   --strict-allow-scripts
+15 verbose stack     If `true`, turn the install-script policy from a warning into a hard
+15 verbose stack
+15 verbose stack   --dangerously-allow-all-scripts
+15 verbose stack     If `true`, bypass the `allowScripts` policy entirely and run every
+15 verbose stack
+15 verbose stack   --audit
+15 verbose stack     When "true" submit audit reports alongside the current npm command to the
+15 verbose stack
+15 verbose stack   --bin-links
+15 verbose stack     Tells npm to create symlinks (or `.cmd` shims on Windows) for package
+15 verbose stack
+15 verbose stack   --fund
+15 verbose stack     When "true" displays the message at the end of each `npm install`
+15 verbose stack
+15 verbose stack   --dry-run
+15 verbose stack     Indicates that you don't want npm to make any changes and that it should
+15 verbose stack
+15 verbose stack   -w|--workspace
+15 verbose stack     Enable running a command in the context of the configured workspaces of the
+15 verbose stack
+15 verbose stack   --workspaces
+15 verbose stack     Set to true to run the command in the context of **all** configured
+15 verbose stack
+15 verbose stack   --include-workspace-root
+15 verbose stack     Include the workspace root when workspaces are enabled for a command.
+15 verbose stack
+15 verbose stack   --install-links
+15 verbose stack     When set file: protocol dependencies will be packed and installed as
+15 verbose stack
+15 verbose stack
+15 verbose stack aliases: clean-install, ic, install-clean, isntall-clean
+15 verbose stack
+15 verbose stack Run "npm help ci" for more info
+15 verbose stack     at CI.usageError (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/base-cmd.js:179:26)
+15 verbose stack     at CI.exec (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/commands/ci.js:71:18)
+15 verbose stack     at async Npm.exec (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/npm.js:193:9)
+15 verbose stack     at async module.exports (/data/data/com.termux/files/usr/lib/node_modules/npm/lib/cli/entry.js:67:5)
+16 error code EUSAGE
+17 error
+17 error The `npm ci` command can only install with an existing package-lock.json or
+17 error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+17 error later to generate a package-lock.json file, then try again.
+17 error
+17 error Clean install a project
+17 error
+17 error Usage:
+17 error npm ci
+17 error
+17 error Options:
+17 error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+17 error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+17 error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+17 error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts]
+17 error [--allow-directory <all|none|root>] [--allow-file <all|none|root>]
+17 error [--allow-git <all|none|root>] [--allow-remote <all|none|root>]
+17 error [--allow-scripts <package-list> [--allow-scripts <package-list> ...]]
+17 error [--strict-allow-scripts] [--dangerously-allow-all-scripts] [--no-audit]
+17 error [--no-bin-links] [--no-fund] [--dry-run]
+17 error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+17 error [--workspaces] [--include-workspace-root] [--install-links]
+17 error
+17 error   --install-strategy
+17 error     Sets the strategy for installing packages in node_modules.
+17 error
+17 error   --legacy-bundling
+17 error     Instead of hoisting package installs in `node_modules`, install packages
+17 error
+17 error   --global-style
+17 error     Only install direct dependencies in the top level `node_modules`,
+17 error
+17 error   --omit
+17 error     Dependency types to omit from the installation tree on disk.
+17 error
+17 error   --include
+17 error     Option that allows for defining which types of dependencies to install.
+17 error
+17 error   --strict-peer-deps
+17 error     If set to `true`, and `--legacy-peer-deps` is not set, then _any_
+17 error
+17 error   --foreground-scripts
+17 error     Run all build scripts (ie, `preinstall`, `install`, and
+17 error
+17 error   --ignore-scripts
+17 error     If true, npm does not run scripts specified in package.json files.
+17 error
+17 error   --allow-directory
+17 error     Limits the ability for npm to install dependencies from directories.
+17 error
+17 error   --allow-file
+17 error     Limits the ability for npm to install dependencies from tarball files.
+17 error
+17 error   --allow-git
+17 error     Limits the ability for npm to fetch dependencies from git references.
+17 error
+17 error   --allow-remote
+17 error     Limits the ability for npm to fetch dependencies from urls.
+17 error
+17 error   --allow-scripts
+17 error     Comma-separated list of packages whose install-time lifecycle scripts
+17 error
+17 error   --strict-allow-scripts
+17 error     If `true`, turn the install-script policy from a warning into a hard
+17 error
+17 error   --dangerously-allow-all-scripts
+17 error     If `true`, bypass the `allowScripts` policy entirely and run every
+17 error
+17 error   --audit
+17 error     When "true" submit audit reports alongside the current npm command to the
+17 error
+17 error   --bin-links
+17 error     Tells npm to create symlinks (or `.cmd` shims on Windows) for package
+17 error
+17 error   --fund
+17 error     When "true" displays the message at the end of each `npm install`
+17 error
+17 error   --dry-run
+17 error     Indicates that you don't want npm to make any changes and that it should
+17 error
+17 error   -w|--workspace
+17 error     Enable running a command in the context of the configured workspaces of the
+17 error
+17 error   --workspaces
+17 error     Set to true to run the command in the context of **all** configured
+17 error
+17 error   --include-workspace-root
+17 error     Include the workspace root when workspaces are enabled for a command.
+17 error
+17 error   --install-links
+17 error     When set file: protocol dependencies will be packed and installed as
+17 error
+17 error
+17 error aliases: clean-install, ic, install-clean, isntall-clean
+17 error
+17 error Run "npm help ci" for more info
+18 verbose cwd /data/data/com.termux/files/home
+19 verbose os Linux 5.10.237-android12-9-00014-gf82f7360927e-ab14119954
+20 verbose node v24.18.0
+21 verbose npm  v11.20.0
+22 verbose exit 1
+23 verbose code 1
+24 error A complete log of this run can be found in: /data/data/com.termux/files/home/.npm/_logs/2026-11-07T02_17_55_668Z-debug-0.log
